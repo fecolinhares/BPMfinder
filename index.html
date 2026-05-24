@@ -11,8 +11,8 @@
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎵</text></svg>">
 
   <!-- essentia.js WASM -->
-  <script src="https://cdn.jsdelivr.net/npm/essentia.js@0.1.3/dist/essentia.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/essentia.js@0.1.3/dist/essentia-wasm.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/essentia.js@0.1.3/dist/essentia.js-core.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/essentia.js@0.1.3/dist/essentia-wasm.web.js"></script>
 
   <style>
     /* --- Reset --- */
@@ -295,6 +295,13 @@
     }
 
     /* --- File Info --- */
+    .upload-panel {
+      display: none;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+    .upload-panel.visible { display: flex; }
+
     .file-info {
       display: flex;
       align-items: center;
@@ -525,7 +532,7 @@
     </div>
 
     <!-- File Info + Analyze -->
-    <div id="uploadPanel" style="display: none; display: flex; flex-direction: column; gap: var(--space-3);">
+    <div id="uploadPanel" class="upload-panel">
       <div class="file-info" id="fileInfo">
         <span class="file-info-icon">🎵</span>
         <span class="file-info-name" id="fileName">—</span>
@@ -548,7 +555,7 @@
       <div class="result-label">Beats Per Minute</div>
       <div class="result-bpm" id="bpmValue">—</div>
       <div class="result-tempo" id="bpmTempo"></div>
-      <div class="result-confidence" id="bpmConfidence"></div>
+      <div class="bpm-confidence" id="bpmConfidence"></div>
       <div class="actions">
         <button id="analyzeAgain">Analyze another file</button>
       </div>
@@ -646,7 +653,7 @@
       loading.classList.remove('visible');
       result.classList.remove('visible');
       dropZone.classList.remove('hidden');
-      uploadPanel.style.display = 'none';
+      uploadPanel.classList.remove('visible');
     }
 
     // --- File handling ---
@@ -672,9 +679,12 @@
       fileSize.textContent = formatSize(file.size);
       analyzeBtn.disabled = false;
 
+      // Reset previous result first, then show file panel
+      hideError();
+      loading.classList.remove('visible');
+      result.classList.remove('visible');
       dropZone.classList.add('hidden');
-      uploadPanel.style.display = 'flex';
-      resetUI();
+      uploadPanel.classList.add('visible');
     }
 
     // Drop zone
@@ -700,7 +710,7 @@
       fileInput.value = '';
       analyzeBtn.disabled = true;
       dropZone.classList.remove('hidden');
-      uploadPanel.style.display = 'none';
+      uploadPanel.classList.remove('visible');
       resetUI();
     });
 
@@ -710,7 +720,7 @@
       fileInput.value = '';
       analyzeBtn.disabled = true;
       dropZone.classList.remove('hidden');
-      uploadPanel.style.display = 'none';
+      uploadPanel.classList.remove('visible');
       resetUI();
     });
 
@@ -719,7 +729,7 @@
       if (!currentFile) return;
       hideError();
       loading.classList.add('visible');
-      uploadPanel.style.display = 'none';
+      uploadPanel.classList.remove('visible');
       loadingFileName.textContent = currentFile.name;
 
       try {
@@ -727,7 +737,7 @@
         displayResult(bpm);
       } catch (err) {
         loading.classList.remove('visible');
-        uploadPanel.style.display = 'flex';
+        uploadPanel.classList.add('visible');
         console.error('BPM detection error:', err);
         showError(err.message || 'Failed to detect BPM. The file may be corrupt or unsupported.');
       }
@@ -741,24 +751,26 @@
 
       // Take first channel
       const channelData = audioBuffer.getChannelData(0);
-      const sampleRate = audioBuffer.sampleRate;
 
-      // Initialize essentia.js
-      const Essentia = globalThis.Essentia;
-      const EssentiaWASM = globalThis.EssentiaWASM;
-      if (!Essentia || !EssentiaWASM) {
+      // Initialize essentia.js (MODULARIZE pattern — EssentiaWASM is a factory function)
+      const EssentiaConstructor = globalThis.Essentia;
+      const wasmFactory = globalThis.EssentiaWASM;
+      if (!EssentiaConstructor || !wasmFactory) {
         throw new Error('essentia.js failed to load. Check your internet connection.');
       }
-      const essentia = new Essentia(EssentiaWASM);
+
+      // Call the WASM factory — returns a Promise that resolves to the initialized Module
+      const wasmModule = await wasmFactory();
+      const essentia = new EssentiaConstructor(wasmModule);
 
       try {
         // Convert Float32Array to essentia vector
         const audioVector = essentia.arrayToVector(channelData);
-        
+
         // Run RhythmExtractor2013 for BPM detection
         const rhythm = essentia.RhythmExtractor2013(audioVector);
         // Returns: { bpm, confidence, estimates, bpm_intervals, ... }
-        
+
         const detectedBPM = Math.round(rhythm.bpm);
         const confidence = rhythm.confidence;
 
@@ -798,8 +810,8 @@
       bpmTempo.textContent = tempo;
 
       // Confidence display
-      const confidencePct = Math.round((confidence || 0.8) * 100);
-      bpmConfidence.textContent = `${confidencePct}% confidence`;
+      const confidenceVal = typeof confidence === 'number' ? confidence : 0.8;
+      bpmConfidence.textContent = `confidence ${confidenceVal >= 1 ? confidenceVal.toFixed(1) : Math.round(confidenceVal * 100) + '%'}`;
     }
   </script>
 </body>

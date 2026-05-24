@@ -3,8 +3,8 @@ self.addEventListener('install', (event) => {
     caches.open('bpmfinder-v1').then((cache) => {
       return cache.addAll([
         '/',
-        'https://cdn.jsdelivr.net/npm/essentia.js@0.1.3/dist/essentia.js',
-        'https://cdn.jsdelivr.net/npm/essentia.js@0.1.3/dist/essentia-wasm.js',
+        'https://cdn.jsdelivr.net/npm/essentia.js@0.1.3/dist/essentia.js-core.umd.min.js',
+        'https://cdn.jsdelivr.net/npm/essentia.js@0.1.3/dist/essentia-wasm.web.js',
       ]);
     })
   );
