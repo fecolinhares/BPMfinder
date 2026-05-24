@@ -420,10 +420,16 @@
       text-transform: uppercase;
       letter-spacing: 0.08em;
     }
-    .result-confidence {
+    .bpm-confidence {
       font-size: var(--text-xs);
       color: var(--text-tertiary);
       font-family: var(--font-mono);
+    }
+    .bpm-tempo {
+      font-size: var(--text-sm);
+      color: var(--text-secondary);
+      letter-spacing: 0.04em;
+      margin-top: var(--space-1);
     }
 
     /* --- Error --- */
@@ -541,6 +547,7 @@
     <div class="result" id="result">
       <div class="result-label">Beats Per Minute</div>
       <div class="result-bpm" id="bpmValue">—</div>
+      <div class="result-tempo" id="bpmTempo"></div>
       <div class="result-confidence" id="bpmConfidence"></div>
       <div class="actions">
         <button id="analyzeAgain">Analyze another file</button>
@@ -556,7 +563,34 @@
     </footer>
   </div>
 
+  <!-- Service Worker registration -->
   <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').catch(() => {});
+      });
+    }
+  </script>
+
+  <script>
+    // --- BPM Ranges ---
+    const TEMPO_RANGES = [
+      { max: 40, label: 'Grave' },
+      { max: 60, label: 'Largo' },
+      { max: 66, label: 'Larghetto' },
+      { max: 76, label: 'Adagio' },
+      { max: 108, label: 'Andante' },
+      { max: 120, label: 'Moderato' },
+      { max: 156, label: 'Allegro' },
+      { max: 176, label: 'Vivace' },
+      { max: 200, label: 'Presto' },
+      { max: Infinity, label: 'Prestissimo' },
+    ];
+
+    function classifyTempo(bpm) {
+      return TEMPO_RANGES.find(r => bpm <= r.max)?.label || '—';
+    }
+
     // --- Theme ---
     const themeToggle = document.getElementById('themeToggle');
     const html = document.documentElement;
@@ -587,6 +621,7 @@
     const result = document.getElementById('result');
     const bpmValue = document.getElementById('bpmValue');
     const bpmConfidence = document.getElementById('bpmConfidence');
+    const bpmTempo = document.getElementById('bpmTempo');
     const analyzeAgain = document.getElementById('analyzeAgain');
     const errorEl = document.getElementById('error');
 
@@ -757,6 +792,10 @@
         if (progress < 1) requestAnimationFrame(animate);
       }
       requestAnimationFrame(animate);
+
+      // Tempo classification
+      const tempo = classifyTempo(bpm);
+      bpmTempo.textContent = tempo;
 
       // Confidence display
       const confidencePct = Math.round((confidence || 0.8) * 100);
