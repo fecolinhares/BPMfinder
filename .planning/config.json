@@ -1,0 +1,17 @@
+{
+  "project_name": "BPMfinder",
+  "created": "2026-05-24",
+  "current_phase": 1,
+  "total_phases": 2,
+  "language": "en",
+  "yolo_mode": false,
+  "git": {
+    "enabled": true,
+    "auto_commit": true,
+    "conventional_commits": true
+  },
+  "subagents": {
+    "researcher": false,
+    "roadmapper": false
+  }
+}

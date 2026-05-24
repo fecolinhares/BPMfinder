@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BPMfinder — instant BPM detection</title>
+  <meta name="description" content="Upload an audio file and get the BPM instantly. All processing happens in your browser — nothing is uploaded to any server.">
+  <meta property="og:title" content="BPMfinder">
+  <meta property="og:description" content="Instant BPM detection in your browser. No uploads, no servers, no backend.">
+  <meta property="og:type" content="website">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎵</text></svg>">
+
+  <!-- essentia.js WASM -->
+  <script src="https://cdn.jsdelivr.net/npm/essentia.js@0.1.3/dist/essentia.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/essentia.js@0.1.3/dist/essentia-wasm.js"></script>
+
+  <style>
+    /* --- Reset --- */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* --- Design Tokens --- */
+    :root {
+      /* Typography — system font stack (product register) */
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      --font-mono: ui-monospace, "SF Mono", "Cascadia Code", "Roboto Mono", Menlo, monospace;
+      
+      /* Fixed rem scale — 4 sizes */
+      --text-xs: 0.75rem;    /* 12px — captions */
+      --text-sm: 0.875rem;   /* 14px — metadata, secondary */
+      --text-base: 1rem;     /* 16px — body */
+      --text-lg: 1.25rem;    /* 20px — subheadings */
+      --text-xl: 2rem;       /* 32px — hero */
+      --text-2xl: 2.5rem;    /* 40px — large hero */
+      
+      /* Spacing — 4pt base */
+      --space-1: 0.25rem;   /*  4px */
+      --space-2: 0.5rem;    /*  8px */
+      --space-3: 0.75rem;   /* 12px */
+      --space-4: 1rem;      /* 16px */
+      --space-6: 1.5rem;    /* 24px */
+      --space-8: 2rem;      /* 32px */
+      --space-12: 3rem;     /* 48px */
+      --space-16: 4rem;     /* 64px */
+      
+      /* Radii */
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      
+      /* Transitions */
+      --transition-fast: 150ms ease;
+      --transition-base: 200ms ease;
+      
+      /* Elevation (dark mode) */
+      --elevation-1: rgba(255, 255, 255, 0.04);
+      --elevation-2: rgba(255, 255, 255, 0.07);
+      --elevation-3: rgba(255, 255, 255, 0.10);
+    }
+
+    /* --- Dark Theme (default) --- */
+    [data-theme="dark"] {
+      /* Neutrals tinted toward warm amber (chroma 0.01) */
+      --bg-base: oklch(0.08 0.01 60);
+      --bg-surface: oklch(0.12 0.01 60);
+      --bg-elevated: oklch(0.16 0.01 60);
+      --bg-hover: oklch(0.20 0.01 60);
+      
+      --text-primary: oklch(0.92 0.005 60);
+      --text-secondary: oklch(0.65 0.008 60);
+      --text-tertiary: oklch(0.45 0.008 60);
+      
+      --border-subtle: oklch(0.20 0.01 60);
+      --border-default: oklch(0.28 0.01 60);
+      
+      /* Accent — warm amber (not blue, not purple) */
+      --accent: oklch(0.70 0.14 75);
+      --accent-hover: oklch(0.75 0.14 75);
+      --accent-dim: oklch(0.70 0.14 75 / 0.15);
+      --accent-glow: oklch(0.70 0.14 75 / 0.08);
+      
+      /* Semantic */
+      --success: oklch(0.65 0.14 150);
+      --error: oklch(0.60 0.18 30);
+      --warning: oklch(0.72 0.12 85);
+      
+      /* Drop zone */
+      --drop-border: oklch(0.30 0.01 60);
+      --drop-bg: oklch(0.12 0.01 60);
+      --drop-active-border: var(--accent);
+      --drop-active-bg: var(--accent-dim);
+    }
+
+    /* --- Light Theme --- */
+    [data-theme="light"] {
+      --bg-base: oklch(0.97 0.005 60);
+      --bg-surface: oklch(0.995 0.002 60);
+      --bg-elevated: oklch(1 0 0);
+      --bg-hover: oklch(0.93 0.005 60);
+      
+      --text-primary: oklch(0.15 0.01 60);
+      --text-secondary: oklch(0.45 0.008 60);
+      --text-tertiary: oklch(0.60 0.005 60);
+      
+      --border-subtle: oklch(0.88 0.005 60);
+      --border-default: oklch(0.80 0.005 60);
+      
+      --accent: oklch(0.55 0.16 75);
+      --accent-hover: oklch(0.50 0.16 75);
+      --accent-dim: oklch(0.55 0.16 75 / 0.10);
+      --accent-glow: oklch(0.55 0.16 75 / 0.06);
+      
+      --success: oklch(0.55 0.15 150);
+      --error: oklch(0.55 0.20 30);
+      --warning: oklch(0.65 0.14 85);
+      
+      --drop-border: oklch(0.78 0.005 60);
+      --drop-bg: oklch(0.97 0.005 60);
+      --drop-active-border: var(--accent);
+      --drop-active-bg: var(--accent-dim);
+    }
+
+    /* --- Base --- */
+    html { font-size: 16px; }
+    body {
+      font-family: var(--font-sans);
+      font-size: var(--text-base);
+      color: var(--text-primary);
+      background: var(--bg-base);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      transition: background var(--transition-base), color var(--transition-base);
+    }
+
+    /* --- Layout --- */
+    .app {
+      max-width: 560px;
+      width: 100%;
+      margin: 0 auto;
+      padding: var(--space-6) var(--space-6);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-8);
+    }
+
+    /* --- Header --- */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: var(--space-4);
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      text-decoration: none;
+      color: var(--text-primary);
+    }
+    .logo-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-sm);
+      background: var(--accent-dim);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: var(--text-lg);
+    }
+    .logo-text {
+      font-size: var(--text-base);
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+    .logo-bpm {
+      color: var(--accent);
+    }
+
+    /* --- Theme Toggle --- */
+    .theme-toggle {
+      background: none;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--text-secondary);
+      font-size: var(--text-base);
+      transition: all var(--transition-fast);
+    }
+    .theme-toggle:hover {
+      background: var(--bg-hover);
+      color: var(--text-primary);
+      border-color: var(--border-default);
+    }
+
+    /* --- Hero --- */
+    .hero {
+      text-align: center;
+      padding: var(--space-4) 0 0;
+    }
+    .hero h1 {
+      font-size: var(--text-2xl);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      margin-bottom: var(--space-3);
+    }
+    .hero h1 span { color: var(--accent); }
+    .hero p {
+      font-size: var(--text-sm);
+      color: var(--text-secondary);
+      max-width: 400px;
+      margin: 0 auto;
+    }
+
+    /* --- Drop Zone --- */
+    .drop-zone {
+      position: relative;
+      border: 2px dashed var(--drop-border);
+      border-radius: var(--radius-lg);
+      background: var(--drop-bg);
+      padding: var(--space-12) var(--space-6);
+      text-align: center;
+      cursor: pointer;
+      transition: all var(--transition-base);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-4);
+    }
+    .drop-zone:hover {
+      border-color: var(--border-default);
+      background: var(--bg-hover);
+    }
+    .drop-zone.drag-over {
+      border-color: var(--drop-active-border);
+      background: var(--drop-active-bg);
+      transform: scale(1.01);
+    }
+    .drop-zone.has-file {
+      border-style: solid;
+      border-color: var(--border-subtle);
+      padding: var(--space-6);
+      cursor: default;
+    }
+    .drop-zone.has-file:hover {
+      border-color: var(--border-subtle);
+      background: var(--drop-bg);
+    }
+    .drop-zone.hidden { display: none; }
+
+    .drop-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-md);
+      background: var(--accent-dim);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      transition: transform var(--transition-base);
+    }
+    .drag-over .drop-icon { transform: scale(1.1); }
+
+    .drop-label {
+      font-size: var(--text-base);
+      font-weight: 500;
+    }
+    .drop-hint {
+      font-size: var(--text-sm);
+      color: var(--text-tertiary);
+    }
+    .drop-hint code {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      background: var(--bg-hover);
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    /* Hidden file input */
+    .file-input {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    /* --- File Info --- */
+    .file-info {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-3) var(--space-4);
+      background: var(--bg-elevated);
+      border-radius: var(--radius-sm);
+      width: 100%;
+    }
+    .file-info-icon {
+      font-size: var(--text-lg);
+      flex-shrink: 0;
+    }
+    .file-info-name {
+      font-size: var(--text-sm);
+      font-weight: 500;
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      text-align: left;
+    }
+    .file-info-size {
+      font-size: var(--text-xs);
+      color: var(--text-tertiary);
+      flex-shrink: 0;
+    }
+    .file-info-clear {
+      background: none;
+      border: none;
+      color: var(--text-tertiary);
+      cursor: pointer;
+      padding: var(--space-1);
+      border-radius: 4px;
+      font-size: var(--text-sm);
+      flex-shrink: 0;
+      transition: color var(--transition-fast);
+    }
+    .file-info-clear:hover { color: var(--text-primary); }
+
+    /* --- Analyze Button --- */
+    .analyze-btn {
+      width: 100%;
+      padding: var(--space-3) var(--space-6);
+      font-size: var(--text-base);
+      font-weight: 600;
+      font-family: var(--font-sans);
+      border: none;
+      border-radius: var(--radius-md);
+      background: var(--accent);
+      color: var(--bg-base);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+    }
+    .analyze-btn:hover:not(:disabled) {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+    }
+    .analyze-btn:active:not(:disabled) {
+      transform: translateY(0);
+    }
+    .analyze-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+    .analyze-btn:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    /* --- Loading State --- */
+    .loading {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-6);
+      padding: var(--space-12) var(--space-6);
+      text-align: center;
+    }
+    .loading.visible { display: flex; }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid var(--border-subtle);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .loading-label {
+      font-size: var(--text-sm);
+      color: var(--text-secondary);
+    }
+    .loading-label em { font-style: normal; color: var(--accent); }
+
+    /* --- Result --- */
+    .result {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-3);
+      text-align: center;
+    }
+    .result.visible { display: flex; }
+
+    .result-bpm {
+      font-size: 5rem;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 1;
+      color: var(--accent);
+      font-variant-numeric: tabular-nums;
+    }
+    .result-label {
+      font-size: var(--text-sm);
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .result-confidence {
+      font-size: var(--text-xs);
+      color: var(--text-tertiary);
+      font-family: var(--font-mono);
+    }
+
+    /* --- Error --- */
+    .error {
+      display: none;
+      padding: var(--space-3) var(--space-4);
+      background: var(--accent-dim);
+      border: 1px solid var(--error);
+      border-radius: var(--radius-sm);
+      color: var(--error);
+      font-size: var(--text-sm);
+      text-align: center;
+    }
+    .error.visible { display: block; }
+
+    /* --- Actions Row --- */
+    .actions {
+      display: flex;
+      gap: var(--space-3);
+      margin-top: var(--space-2);
+    }
+    .actions button {
+      padding: var(--space-2) var(--space-4);
+      font-size: var(--text-sm);
+      font-weight: 500;
+      font-family: var(--font-sans);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      background: var(--bg-surface);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+    .actions button:hover {
+      background: var(--bg-hover);
+      color: var(--text-primary);
+      border-color: var(--border-default);
+    }
+
+    /* --- Footer --- */
+    .footer {
+      text-align: center;
+      padding: var(--space-6) 0;
+      font-size: var(--text-xs);
+      color: var(--text-tertiary);
+    }
+    .footer a {
+      color: var(--text-secondary);
+      text-decoration: none;
+    }
+    .footer a:hover { color: var(--text-primary); }
+
+    /* --- Responsive --- */
+    @media (max-width: 480px) {
+      .app { padding: var(--space-4) var(--space-4); gap: var(--space-6); }
+      .hero h1 { font-size: var(--text-xl); }
+      .drop-zone { padding: var(--space-8) var(--space-4); }
+      .result-bpm { font-size: 3.5rem; }
+    }
+
+    /* --- Reduced Motion --- */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- Header -->
+    <header class="header">
+      <a href="/" class="logo">
+        <span class="logo-icon">♪</span>
+        <span class="logo-text"><span class="logo-bpm">BPM</span>finder</span>
+      </a>
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">☀</button>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero">
+      <h1>Find the <span>BPM</span> of any song</h1>
+      <p>Upload an audio file. Detection happens entirely in your browser — nothing leaves your machine.</p>
+    </section>
+
+    <!-- Drop Zone -->
+    <div class="drop-zone" id="dropZone">
+      <input type="file" class="file-input" id="fileInput" accept="audio/*">
+      <div class="drop-icon">🎵</div>
+      <div class="drop-label">Drop an audio file here</div>
+      <div class="drop-hint">or click to browse · <code>MP3</code> <code>WAV</code> <code>FLAC</code> <code>OGG</code></div>
+    </div>
+
+    <!-- File Info + Analyze -->
+    <div id="uploadPanel" style="display: none; display: flex; flex-direction: column; gap: var(--space-3);">
+      <div class="file-info" id="fileInfo">
+        <span class="file-info-icon">🎵</span>
+        <span class="file-info-name" id="fileName">—</span>
+        <span class="file-info-size" id="fileSize">—</span>
+        <button class="file-info-clear" id="clearFile" aria-label="Remove file">✕</button>
+      </div>
+      <button class="analyze-btn" id="analyzeBtn" disabled>
+        <span>Analyze BPM</span>
+      </button>
+    </div>
+
+    <!-- Loading -->
+    <div class="loading" id="loading">
+      <div class="spinner"></div>
+      <div class="loading-label">Analyzing <em id="loadingFileName">audio</em>…</div>
+    </div>
+
+    <!-- Result -->
+    <div class="result" id="result">
+      <div class="result-label">Beats Per Minute</div>
+      <div class="result-bpm" id="bpmValue">—</div>
+      <div class="result-confidence" id="bpmConfidence"></div>
+      <div class="actions">
+        <button id="analyzeAgain">Analyze another file</button>
+      </div>
+    </div>
+
+    <!-- Error -->
+    <div class="error" id="error"></div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p>All processing happens client-side via <a href="https://essentia.upf.edu/" target="_blank" rel="noopener">essentia.js</a> · No uploads · No servers</p>
+    </footer>
+  </div>
+
+  <script>
+    // --- Theme ---
+    const themeToggle = document.getElementById('themeToggle');
+    const html = document.documentElement;
+
+    // Restore theme from localStorage
+    const savedTheme = localStorage.getItem('bpmfinder-theme') || 'dark';
+    html.setAttribute('data-theme', savedTheme);
+    themeToggle.textContent = savedTheme === 'dark' ? '☀' : '☾';
+
+    themeToggle.addEventListener('click', () => {
+      const current = html.getAttribute('data-theme');
+      const next = current === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-theme', next);
+      localStorage.setItem('bpmfinder-theme', next);
+      themeToggle.textContent = next === 'dark' ? '☀' : '☾';
+    });
+
+    // --- DOM refs ---
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const uploadPanel = document.getElementById('uploadPanel');
+    const fileName = document.getElementById('fileName');
+    const fileSize = document.getElementById('fileSize');
+    const clearFile = document.getElementById('clearFile');
+    const analyzeBtn = document.getElementById('analyzeBtn');
+    const loading = document.getElementById('loading');
+    const loadingFileName = document.getElementById('loadingFileName');
+    const result = document.getElementById('result');
+    const bpmValue = document.getElementById('bpmValue');
+    const bpmConfidence = document.getElementById('bpmConfidence');
+    const analyzeAgain = document.getElementById('analyzeAgain');
+    const errorEl = document.getElementById('error');
+
+    let currentFile = null;
+    let audioContext = null;
+
+    // --- Helpers ---
+    function formatSize(bytes) {
+      if (bytes < 1024) return bytes + ' B';
+      if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+      return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+    }
+
+    function showError(msg) {
+      errorEl.textContent = msg;
+      errorEl.classList.add('visible');
+    }
+    function hideError() { errorEl.classList.remove('visible'); }
+
+    function resetUI() {
+      hideError();
+      loading.classList.remove('visible');
+      result.classList.remove('visible');
+      dropZone.classList.remove('hidden');
+      uploadPanel.style.display = 'none';
+    }
+
+    // --- File handling ---
+    function handleFile(file) {
+      hideError();
+      const validTypes = ['audio/mpeg', 'audio/wav', 'audio/wave', 'audio/x-wav', 
+                          'audio/flac', 'audio/ogg', 'audio/x-flac', 'audio/opus', 
+                          'audio/webm', 'audio/aac', 'audio/mp4'];
+      const validExt = /\.(mp3|wav|flac|ogg|opus|webm|aac|m4a|mp4)$/i;
+
+      if (!validTypes.includes(file.type) && !validExt.test(file.name)) {
+        showError(`Unsupported file type "${file.type || 'unknown'}". Try MP3, WAV, FLAC, or OGG.`);
+        return;
+      }
+
+      if (file.size > 200 * 1024 * 1024) {
+        showError('File too large (max 200 MB). Try a smaller file.');
+        return;
+      }
+
+      currentFile = file;
+      fileName.textContent = file.name;
+      fileSize.textContent = formatSize(file.size);
+      analyzeBtn.disabled = false;
+
+      dropZone.classList.add('hidden');
+      uploadPanel.style.display = 'flex';
+      resetUI();
+    }
+
+    // Drop zone
+    dropZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropZone.classList.add('drag-over');
+    });
+    dropZone.addEventListener('dragleave', () => {
+      dropZone.classList.remove('drag-over');
+    });
+    dropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropZone.classList.remove('drag-over');
+      if (e.dataTransfer.files.length > 0) handleFile(e.dataTransfer.files[0]);
+    });
+    fileInput.addEventListener('change', () => {
+      if (fileInput.files.length > 0) handleFile(fileInput.files[0]);
+    });
+
+    // Clear file
+    clearFile.addEventListener('click', () => {
+      currentFile = null;
+      fileInput.value = '';
+      analyzeBtn.disabled = true;
+      dropZone.classList.remove('hidden');
+      uploadPanel.style.display = 'none';
+      resetUI();
+    });
+
+    // Analyze again
+    analyzeAgain.addEventListener('click', () => {
+      currentFile = null;
+      fileInput.value = '';
+      analyzeBtn.disabled = true;
+      dropZone.classList.remove('hidden');
+      uploadPanel.style.display = 'none';
+      resetUI();
+    });
+
+    // --- BPM Detection ---
+    analyzeBtn.addEventListener('click', async () => {
+      if (!currentFile) return;
+      hideError();
+      loading.classList.add('visible');
+      uploadPanel.style.display = 'none';
+      loadingFileName.textContent = currentFile.name;
+
+      try {
+        const bpm = await detectBPM(currentFile);
+        displayResult(bpm);
+      } catch (err) {
+        loading.classList.remove('visible');
+        uploadPanel.style.display = 'flex';
+        console.error('BPM detection error:', err);
+        showError(err.message || 'Failed to detect BPM. The file may be corrupt or unsupported.');
+      }
+    });
+
+    async function detectBPM(file) {
+      // Decode audio
+      const arrayBuffer = await file.arrayBuffer();
+      if (!audioContext) audioContext = new AudioContext();
+      const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+
+      // Take first channel
+      const channelData = audioBuffer.getChannelData(0);
+      const sampleRate = audioBuffer.sampleRate;
+
+      // Initialize essentia.js
+      const Essentia = globalThis.Essentia;
+      const EssentiaWASM = globalThis.EssentiaWASM;
+      if (!Essentia || !EssentiaWASM) {
+        throw new Error('essentia.js failed to load. Check your internet connection.');
+      }
+      const essentia = new Essentia(EssentiaWASM);
+
+      try {
+        // Convert Float32Array to essentia vector
+        const audioVector = essentia.arrayToVector(channelData);
+        
+        // Run RhythmExtractor2013 for BPM detection
+        const rhythm = essentia.RhythmExtractor2013(audioVector);
+        // Returns: { bpm, confidence, estimates, bpm_intervals, ... }
+        
+        const detectedBPM = Math.round(rhythm.bpm);
+        const confidence = rhythm.confidence;
+
+        essentia.delete();
+
+        if (!detectedBPM || detectedBPM < 20 || detectedBPM > 300) {
+          throw new Error(`Unusual BPM value (${detectedBPM}). The file might be ambient or speech.`);
+        }
+
+        return { bpm: detectedBPM, confidence };
+      } catch (err) {
+        essentia.delete();
+        throw err;
+      }
+    }
+
+    function displayResult({ bpm, confidence }) {
+      loading.classList.remove('visible');
+      result.classList.add('visible');
+
+      // Animate the number
+      bpmValue.textContent = '0';
+      const duration = 600;
+      const start = performance.now();
+      const target = bpm;
+      function animate(time) {
+        const progress = Math.min((time - start) / duration, 1);
+        // Ease-out cubic
+        const eased = 1 - Math.pow(1 - progress, 3);
+        bpmValue.textContent = Math.round(eased * target);
+        if (progress < 1) requestAnimationFrame(animate);
+      }
+      requestAnimationFrame(animate);
+
+      // Confidence display
+      const confidencePct = Math.round((confidence || 0.8) * 100);
+      bpmConfidence.textContent = `${confidencePct}% confidence`;
+    }
+  </script>
+</body>
+</html>
