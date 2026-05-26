@@ -1,14 +1,14 @@
 # STATE: BPMfinder
 
-**Status:** 🟢 Active — Phase 3 Complete
-**Last updated:** 2026-05-24
+**Status:** 🟢 Complete — all phases delivered
+**Last updated:** 2026-05-25
 
 ## Project Reference
 
-See: `.planning/PROJECT.md` (updated 2026-05-24)
+See: `.planning/PROJECT.md` (updated 2026-05-25)
 
 **Core value:** Users can discover the BPM of any song instantly, privately, and without uploading files to any server.
-**Current focus:** Ready for deploy
+**Current focus:** Feature-complete, awaiting next instructions
 
 ## Phase Progress
 
@@ -18,84 +18,66 @@ See: `.planning/PROJECT.md` (updated 2026-05-24)
 | Phase 2 — Polish + Deploy | ✅ Complete |
 | Phase 3 — Helper Modal: Tempo Reference | ✅ Complete |
 
-## Feature: Tempo Reference Modal
+## Features Delivered
 
-**Description:** Helper icon (ⓘ) next to the tempo classification label opens a native `<dialog>` modal showing all 10 tempo classifications (Grave → Prestissimo) with emoji, term, BPM range, and meaning.
+### BPM Detection
+- essentia.js WASM (RhythmExtractor2013) — full client-side, no uploads
+- Loading state with spinner + filename indicator
+- Confidence display: percentual 0–100% with semantic color coding
+  - ≥ 70% → green (`--success`)
+  - 50–70% → amber (`--accent`)
+  - < 50% → red (`--error`)
 
-**Design choices (impeccable):**
-- Native `<dialog>` element — built-in focus trap, backdrop, Escape-to-close, top-layer stacking
-- Ease-out-expo entrance animation (`cubic-bezier(0.16, 1, 0.3, 1)`) — 300ms entry, per motion design
-- Backdrop: `oklch(0 0 0 / 0.35)` — OKLCH, no rgba
-- `@starting-style` via keyframes, reduced-motion fallback
-- Table rows: hover state with `--bg-hover`, alternating subtle borders
-- Helper button: focus-visible ring, hover bg highlight, 20x20px
+### File Handling
+- Click-to-browse + drag-and-drop zone
+- Accepted formats: MP3, WAV, FLAC, OGG, OPUS, AAC, WEBM
+- Validation: unsupported types and files >200 MB rejected with clear error
+- Auto-analyze on file select (no button click needed)
 
-### Bugfix: Dialog não centralizava no mobile
-**Causa raiz:** O reset universal `*, *::before, *::after { margin: 0; }` anulava o `margin: auto` nativo do `<dialog>`. Além disso, o UA stylesheet do browser seta `inset: 0` (`left: 0; right: 0; top: 0; bottom: 0`) que, combinado com `width` explícito e `margin: 0`, criava um layout **over-constrained** — o browser ignora `right` e posiciona o dialog em `left: 0`.
+### Tempo Reference Modal
+- Helper icon ⓘ opens native `<dialog>` with 10-classification table
+- Ease-out-expo 300ms entrance, OKLCH backdrop, focus trap
+- Data generated from TEMPO_RANGES array (DRY)
+- Hidden until detection (`bpm-tempo.empty`)
 
-**Fix:** Override do UA `inset: 0` via `.tempo-dialog:modal { top: 50%; left: 50%; transform: translate(-50%, -50%); }`. Animation keyframes atualizadas pra incluir `translate(-50%, -50%)` como base, com `scale`/`translateY` adicionais pro entrance effect.
+### UI/UX
+- Dark/light theme with localStorage persistence
+- Responsive: mobile, tablet, desktop
+- OKLCH color system, 4pt spacing scale, system font stack
+- Reduced-motion support
 
-**Verificação:** Dialog centrado horizontal e verticalmente em qualquer viewport. Testado em 1280x577 — centrado com offset de apenas 7px (scrollbar). Funciona em mobile portrait (375px).
+### Deployment
+- GitHub Pages (via GitHub Actions workflow)
+- Service Worker for offline WASM caching
+- Open Graph meta tags + favicon
 
-**Bugs corrigidos (debug session)**
+### Modal Header
+- Centered title with absolute-positioned close button
+- `--space-8` (32px) top/bottom padding — fixed token bug (`--space-5` was invalid)
 
-### Bug #1: CDN paths errados
-- `essentia.js` e `essentia-wasm.js` não existiam → mudado para `essentia.js-core.umd.min.js` e `essentia-wasm.web.js`
+### Footer
+- Clean: "No uploads · No servers · Open source" with link to essentia
 
-### Bug #2: Upload panel sempre visível
-- Inline `style="display: none; display: flex"` → CSS class `.upload-panel` com `display: none` padrão
+## Bugs corrigidos (debug session)
 
-### Bug #3: CSS class mismatch
-- HTML usava `class="result-confidence"` mas CSS tinha `.bpm-confidence`
+| # | Bug | Fix |
+|---|-----|-----|
+| 1 | CDN paths errados | Mudado para `essentia.js-core.umd.min.js` e `essentia-wasm.web.js` |
+| 2 | Upload panel sempre visível | CSS class `.upload-panel` com `display: none` padrão |
+| 3 | CSS class mismatch | HTML `result-confidence` → CSS `.bpm-confidence` |
+| 4 | EssentiaWASM MODULARIZE API | `await wasmFactory()` antes de `new Essentia(module)` |
+| 5 | resetUI() sobrescrevia handleFile() | Removida chamada a `resetUI()` dentro de `handleFile()` |
+| 6 | uploadPanel.style.display inline | Trocar para `classList.remove('visible')` |
 
-### Bug #4: EssentiaWASM MODULARIZE API
-- `EssentiaWASM` é factory function que retorna Promise → `await wasmFactory()` antes de `new Essentia(module)`
+## License
 
-### Bug #5: resetUI() sobrescrevia estado do handleFile
-- `handleFile()` chamava `resetUI()` depois de configurar o painel → `resetUI()` removia as classes recém-adicionadas. Fix: eliminar chamada a `resetUI()` dentro de `handleFile()`.
-
-### Bug #6: uploadPanel.style.display = 'none' inline
-- Linhas com `uploadPanel.style.display = 'none'` criavam inline style que vencia CSS class → trocado para `uploadPanel.classList.remove('visible')`
-
-## Melhorias de UX
-
-### Enhancement: Confidence em percentual com cor semântica
-- Confidence agora sempre mostra **0–100%** (nunca mais decimal cru)
-- Se o raw confidence ≥ 1 (áudio sintético), normaliza para 100%
-- **Cores semânticas** (OKLCH, afinadas com o esquema amber):
-  - ≥ 70% → verde (`--success`) — qualidade boa
-  - 50–70% → âmbar (`--accent`) — qualidade média
-  - < 50% → vermelho (`--error`) — qualidade baixa
-- Cores seguem princípios do **impeccable**: restrained, state indicators, sem badges/pills
-
-### Quick Task: Modal header padding (2026-05-24)
-**Slug:** modal-header-padding | `.planning/quick/20260524-modal-header-padding/`
-**Commit:** `6aab88c` → push ✅
-
-**Problema:** O padding do header usava `--space-5`, um token que **não existe** nos tokens do projeto (só existem 1,2,3,4,6,8,12,16). A declaração CSS inteira era ignorada — padding = 0, header espremido.
-
-**Fix:**
-| Antes (inválido) | Depois |
-|---|---|
-| `padding: var(--space-5) var(--space-6)` | `padding: var(--space-8) var(--space-6)` |
-| `--space-5` undefined → CSS ignorado | `--space-8` = 2rem (32px) top/bottom, `--space-6` = 1.5rem (24px) sides |
-
-**Obs:** A documentação anterior que mencionava `--space-5` como "24px vertical, 32px horizontal" estava incorreta — o token nunca funcionou.
-
-### Enhancement: Modal header title centralizado
-- Título da modal centralizado horizontalmente (`justify-content: center`)
-- Botão de fechar reposicionado com `position: absolute; right: var(--space-6)`
-- Título permanece perfeitamente centralizado independente do tamanho do texto
-
-### Enhancement: Footer simplificado
-- Removida menção ao essentia.js do footer
-- Antes: "All processing happens client-side via essentia.js · No uploads · No servers"
-- Depois: "No uploads · No servers · Open source"
-- Mantém link para essentia.upf.edu como "Open source" — crédito técnico sem poluir a mensagem do usuário
+MIT © Feco Linhares — use freely, credit required.
 
 ## Testes
-- UI flow (file select → panel show → analyze → result) ✅
+
+- UI flow: file select → auto-analyze → result ✅
 - BPM detection com sinal sintético: 120 BPM detectado ✅
 - Tempo classification: Moderato ✅
 - Confidence display funcionando ✅
+- Modal open/close/dismiss ✅
 - Nenhum erro no console ✅

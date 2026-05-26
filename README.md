@@ -20,23 +20,24 @@ Find the BPM of any song instantly, in your browser. **No uploads, no servers, n
 
 ## Dev
 
-```bash
-# Start dev server (with no-cache headers)
-python3 server.py 8888
+Any static file server works:
 
-# Or just use Python's built-in (may cache)
+```bash
+# Python
 python3 -m http.server 8888
 ```
 
-Open http://localhost:8888 in your browser.
+Then open http://localhost:8888 in your browser.
 
 ## Deploy
 
-This is a static site. Push to GitHub and enable Pages, or serve from any static file host.
+Push to GitHub and enable Pages.
 
 ```bash
 git push origin master
 ```
+
+The included GitHub Actions workflow handles the rest.
 
 ## License
 

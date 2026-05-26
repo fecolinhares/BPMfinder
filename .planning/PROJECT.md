@@ -2,7 +2,7 @@
 
 ## What This Is
 
-A minimal static web page where users upload an audio file (MP3, WAV, etc.) or paste a YouTube link and get the BPM (beats per minute) detected entirely client-side. Zero backend, zero API calls — everything runs in the browser via Web Audio API.
+A minimal static web page where users drop an audio file (MP3, WAV, FLAC, OGG) and get the BPM detected entirely client-side via essentia.js WASM. Zero backend, zero API calls.
 
 ## Core Value
 
@@ -10,49 +10,60 @@ Users can discover the BPM of any song instantly, privately, and without uploadi
 
 ## Requirements
 
-### Validated
+### Delivered
 
-(Will validate post-ship)
-
-### Active
-
-- [ ] **BPM-01**: User can upload audio file (MP3, WAV, FLAC, OGG) and see detected BPM
-- [ ] **BPM-02**: BPM detection uses essentia.js WASM for real beat tracking
-- [ ] **BPM-03**: Clean, elegant UI following impeccable design principles
-- [ ] **BPM-04**: Drag-and-drop zone for audio files
-- [ ] **BPM-05**: Responsive layout (mobile + desktop)
-- [ ] **BPM-06**: Dark/light mode toggle
-- [ ] **BPM-07**: Deployable as static site (GitHub Pages / Cloudflare Pages)
+- [x] **BPM-01**: Upload audio file, see detected BPM
+- [x] **BPM-02**: essentia.js WASM for real beat tracking
+- [x] **BPM-03**: Loading state during detection
+- [x] **BPM-04**: BPM integer + confidence indicator
+- [x] **BPM-05**: Tempo classification (Grave → Prestissimo) + helper modal
+- [x] **FILE-01**: File input button
+- [x] **FILE-02**: Drag-and-drop zone
+- [x] **FILE-03**: Accepted types displayed
+- [x] **FILE-04**: Error on unsupported types
+- [x] **FILE-05**: Error on decode failure
+- [x] **UI-01**: Clean, minimal layout
+- [x] **UI-02**: Dark/light theme toggle
+- [x] **UI-03**: Responsive layout
+- [x] **UI-04**: Impeccable typography
+- [x] **UI-05**: No placeholder content
+- [x] **UI-06**: Restrained color strategy
+- [x] **UI-07**: Ample whitespace
+- [x] **DEP-01**: Self-contained repo
+- [x] **DEP-02**: Single index.html entry
+- [x] **DEP-03**: GitHub Pages deployable
+- [x] **DEP-04**: Offline via Service Worker
 
 ### Out of Scope
 
-- YouTube link support — requires backend proxy (youtube-dl / yt-dlp), not free static hosting
-- Backend processing of any kind — defeats purpose
-- Audio visualization / waveform — visual complexity without adding core value
-- History/localStorage of past BPM detections — scope for v2
+- YouTube link support — requires backend proxy, violates no-backend constraint
+- Backend processing of any kind
+- Audio visualization / waveform
+- History / localStorage of past detections (v2 candidate)
 
 ## Context
 
 - Pure frontend: HTML + CSS + JavaScript (no frameworks)
-- BPM detection via [essentia.js](https://github.com/MTG/essentia.js) — WebAssembly port of the Essentia library (Music Technology Group, UPF)
-- Must work offline after first load (Service Worker optional)
-- Deploy target: GitHub Pages (`username.github.io/BPMfinder/`) or Cloudflare Pages
+- BPM detection via [essentia.js](https://github.com/MTG/essentia.js) — WebAssembly port of Essentia (UPF)
+- Works offline after first load (Service Worker)
+- Deploy target: GitHub Pages
 
 ## Constraints
 
 - **[No Backend]**: 100% static. No Node.js runtime, no API calls, no database.
-- **[File Size]**: Audio decoding happens in memory — large files (>100MB) may cause issues.
-- **[Browser API]**: Relies on Web Audio API `decodeAudioData()` + AudioContext — requires modern browser.
-- **[License]**: essentia.js is AGPL-3.0 — must comply.
+- **[File Size]**: Audio decoding in memory — files >200 MB rejected.
+- **[Browser API]**: Relies on Web Audio API + AudioContext — requires modern browser.
+- **[License]**: MIT — use freely, credit required.
 
 ## Key Decisions
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| essentia.js for BPM detection | Most robust client-side BPM lib; academic-grade algorithms | ✓ Good |
-| No YouTube support | Requires backend proxy; violates no-backend constraint | ✓ Good |
-| Vanilla HTML/CSS/JS | Zero build tooling, deploy anywhere, no framework lock-in | — Pending |
-| No framework (React/Vue/Svelte) | Single-page tool doesn't warrant framework overhead | — Pending |
+| essentia.js for BPM detection | Most robust client-side BPM lib; academic-grade algorithms | ✅ Good |
+| Auto-analyze on file select | Remove unnecessary click; instant feedback | ✅ Good |
+| No YouTube support | Requires backend proxy; violates no-backend constraint | ✅ Good |
+| Vanilla HTML/CSS/JS | Zero build tooling, deploy anywhere, no framework lock-in | ✅ Good |
+| MIT License | Permissive — use freely with credit | ✅ Good |
 
 ---
-*Last updated: 2026-05-24 after initial creation*
+*Last updated: 2026-05-25*

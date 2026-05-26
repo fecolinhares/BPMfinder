@@ -50,13 +50,36 @@
 - [x] Table hidden initially (`bpm-tempo.empty`), shows only after detection
 
 ### Bugfix: Dialog centralização no mobile
-**Causa raiz:** Reset universal `*, *::before, *::after { margin: 0 }` anulava o `margin: auto` nativo do `<dialog>`. Além disso, o UA `inset: 0` criava layout over-constrained que impedia auto-margins de centralizar.
+Reset universal `margin: 0` anulava `margin: auto` nativo do `<dialog>`. UA `inset: 0` criava layout over-constrained. Fix: `.tempo-dialog:modal { top: 50%; left: 50%; transform: translate(-50%, -50%); }`.
 
-**Fix:** Override do `inset: 0` via `.tempo-dialog:modal { top: 50%; left: 50%; transform: translate(-50%, -50%); }`. Animation keyframes atualizadas pra incluir o base transform `translate(-50%, -50%)` pra não conflitar com a entrance animation.
+## Enhancement: Modal header spacing ✅
 
-Verificado: dialog centrado horizontal e verticalmente (dx: -7, dy: 0 no desktop; funcional em qualquer viewport).
+- **Problem:** `--space-5` não existia nos tokens → padding inválido (0)
+- **Fix:** `padding: var(--space-8) var(--space-6)` → 32px vertical, 24px horizontal
+- **Commit:** `6aab88c`
+
+## Enhancement: Modal header title centralizado ✅
+
+- Título centralizado horizontalmente, botão de fechar com `position: absolute; right: var(--space-6)`
+
+## Enhancement: Auto-Analyze on File Select ✅
+
+- **Antes:** selecionar arquivo → botão "Analyze BPM" → clicar → analisar
+- **Depois:** selecionar arquivo → análise começa automaticamente
+- Botão "Analyze BPM" vira retry (aparece só em caso de erro)
+- **Commit:** `5f532a2`
+
+## Enhancement: Footer simplificado ✅
+
+- Removida menção explícita ao essentia.js do footer
+- "No uploads · No servers · Open source" com link para essentia.upf.edu
+
+## License ✅
+
+- **MIT** — copyright Feco Linhares, use com créditos
+- **Commit:** `6eb38d6`
 
 ## Status Atual
 
-**Phase 3 em desenvolvimento.** App funcional com confidence percentual colorido.
-Acessar: http://192.168.0.103:8899
+**Todas as fases completas.** App funcional e deployado.
+BPM detection com confidence percentual colorido, modal de referência de tempo, auto-analyze on file select, tema dark/light.
