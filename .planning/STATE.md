@@ -68,17 +68,30 @@ See: `.planning/PROJECT.md` (updated 2026-05-24)
   - < 50% → vermelho (`--error`) — qualidade baixa
 - Cores seguem princípios do **impeccable**: restrained, state indicators, sem badges/pills
 
-### Enhancement: Modal header spacing
-- Aumentado o padding interno do cabeçalho do modal de referência de tempo
-- Antes: `var(--space-4) var(--space-5)` = 16px vertical, 24px horizontal
-- Depois: `var(--space-5) var(--space-6)` = 24px vertical, 32px horizontal
-- Melhora a legibilidade e evita que o título "Tempo Reference" fique colado na borda
-- Segue princípios do impeccable: espaçamento consistente, hierarquia visual
+### Quick Task: Modal header padding (2026-05-24)
+**Slug:** modal-header-padding | `.planning/quick/20260524-modal-header-padding/`
+**Commit:** `6aab88c` → push ✅
+
+**Problema:** O padding do header usava `--space-5`, um token que **não existe** nos tokens do projeto (só existem 1,2,3,4,6,8,12,16). A declaração CSS inteira era ignorada — padding = 0, header espremido.
+
+**Fix:**
+| Antes (inválido) | Depois |
+|---|---|
+| `padding: var(--space-5) var(--space-6)` | `padding: var(--space-8) var(--space-6)` |
+| `--space-5` undefined → CSS ignorado | `--space-8` = 2rem (32px) top/bottom, `--space-6` = 1.5rem (24px) sides |
+
+**Obs:** A documentação anterior que mencionava `--space-5` como "24px vertical, 32px horizontal" estava incorreta — o token nunca funcionou.
 
 ### Enhancement: Modal header title centralizado
-- Título da modal agora centralizado horizontalmente (`justify-content: center`)
-- Botão de fechar reposicionado com `position: absolute; right: var(--space-6)` para não afetar o centramento
+- Título da modal centralizado horizontalmente (`justify-content: center`)
+- Botão de fechar reposicionado com `position: absolute; right: var(--space-6)`
 - Título permanece perfeitamente centralizado independente do tamanho do texto
+
+### Enhancement: Footer simplificado
+- Removida menção ao essentia.js do footer
+- Antes: "All processing happens client-side via essentia.js · No uploads · No servers"
+- Depois: "No uploads · No servers · Open source"
+- Mantém link para essentia.upf.edu como "Open source" — crédito técnico sem poluir a mensagem do usuário
 
 ## Testes
 - UI flow (file select → panel show → analyze → result) ✅

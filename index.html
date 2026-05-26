@@ -699,7 +699,7 @@
         <span class="file-info-size" id="fileSize">—</span>
         <button class="file-info-clear" id="clearFile" aria-label="Remove file">✕</button>
       </div>
-      <button class="analyze-btn" id="analyzeBtn" disabled>
+      <button class="analyze-btn" id="analyzeBtn">
         <span>Analyze BPM</span>
       </button>
     </div>
@@ -898,7 +898,6 @@
       currentFile = file;
       fileName.textContent = file.name;
       fileSize.textContent = formatSize(file.size);
-      analyzeBtn.disabled = false;
 
       // Reset previous result first, then show file panel
       hideError();
@@ -906,6 +905,9 @@
       result.classList.remove('visible');
       dropZone.classList.add('hidden');
       uploadPanel.classList.add('visible');
+
+      // Auto-start analysis immediately
+      startAnalysis(currentFile);
     }
 
     // Drop zone
@@ -929,7 +931,6 @@
     clearFile.addEventListener('click', () => {
       currentFile = null;
       fileInput.value = '';
-      analyzeBtn.disabled = true;
       dropZone.classList.remove('hidden');
       uploadPanel.classList.remove('visible');
       resetUI();
@@ -939,7 +940,6 @@
     analyzeAgain.addEventListener('click', () => {
       currentFile = null;
       fileInput.value = '';
-      analyzeBtn.disabled = true;
       dropZone.classList.remove('hidden');
       uploadPanel.classList.remove('visible');
       resetUI();
@@ -961,15 +961,15 @@
     });
 
     // --- BPM Detection ---
-    analyzeBtn.addEventListener('click', async () => {
-      if (!currentFile) return;
+    async function startAnalysis(file) {
+      if (!file) return;
       hideError();
       loading.classList.add('visible');
       uploadPanel.classList.remove('visible');
-      loadingFileName.textContent = currentFile.name;
+      loadingFileName.textContent = file.name;
 
       try {
-        const bpm = await detectBPM(currentFile);
+        const bpm = await detectBPM(file);
         displayResult(bpm);
       } catch (err) {
         loading.classList.remove('visible');
@@ -977,6 +977,11 @@
         console.error('BPM detection error:', err);
         showError(err.message || 'Failed to detect BPM. The file may be corrupt or unsupported.');
       }
+    }
+
+    // Analyze button acts as retry after error
+    analyzeBtn.addEventListener('click', () => {
+      startAnalysis(currentFile);
     });
 
     async function detectBPM(file) {
