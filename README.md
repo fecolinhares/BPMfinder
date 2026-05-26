@@ -48,25 +48,6 @@ Built with the **Rhythmcore Interface** design language (Meng To / Neuform Featu
 - **Zero dependencies** — no build step, no frameworks, no npm
 - **Design contract:** `DESIGN.md` at project root
 
-## Dev
-
-Any static file server works:
-
-```bash
-# Python
-python3 -m http.server 8888
-```
-
-Then open http://localhost:8888 in your browser.
-
-## Deploy
-
-```bash
-git push origin master
-```
-
-The included GitHub Actions workflow handles GitHub Pages deployment.
-
 ## Project Structure
 
 ```
