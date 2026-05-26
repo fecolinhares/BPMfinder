@@ -1,5 +1,7 @@
 # BPMfinder
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 Find the BPM of any song instantly, in your browser. **No uploads, no servers, no backend.**
 
 ## How it works
@@ -38,4 +40,6 @@ git push origin master
 
 ## License
 
-MIT
+MIT © [Feco Linhares](https://github.com/fecolinhares)
+
+You're free to use, modify, distribute, and sell this software, as long as the original copyright notice and permission notice are included. See [LICENSE](LICENSE) for details.
