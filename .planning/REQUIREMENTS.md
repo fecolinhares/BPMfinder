@@ -1,90 +1,47 @@
-# Requirements: BPMfinder
+# Requirements — v2 Rhythmcore Visual Redesign ✅
 
-**Defined:** 2026-05-24
-**Last updated:** 2026-05-25
-**Core Value:** Users can discover the BPM of any song instantly, privately, and without uploading files to any server.
+## COLOR-01: Sync color tokens with Rhythmcore palette
+- [x] **COLOR-01**: Replace `--primary` token with `#06B6D4` (cyan) for secondary UI elements
+- [x] **COLOR-02**: Keep `--accent` amber `#F97316` (already matches, verify contrast)
+- [x] **COLOR-03**: Add `--surface` token (`#4A5568` equivalent in OKLCH dark/light)
+- [x] **COLOR-04**: Adjust dark theme surface/background to Rhythmcore's compact card hierarchy
+- [x] **COLOR-05**: Adjust light theme to match Rhythmcore's `background: #FFFFFF`, `surface: #4A5568`, `text-primary: #111827`, `border: #E5E7EB`
 
-## v1 Requirements
+## TYPE-01: Sync typography with Rhythmcore
+- [x] **TYPE-01**: Load **Inter** from Google Fonts for display/body
+- [x] **TYPE-02**: Load **JetBrains Mono** from Google Fonts for labels and metadata
+- [x] **TYPE-03**: Update `--font-sans` to Inter (with system fallback)
+- [x] **TYPE-04**: Update `--font-mono` to JetBrains Mono (with mono fallback)
+- [x] **TYPE-05**: Set display-lg scale: `64px`, weight 500, line-height 1.04 for hero BPM
+- [x] **TYPE-06**: Set body-md: `16px`, weight 400, line-height 1.6
+- [x] **TYPE-07**: Set label-md (JetBrains Mono): `12px`, weight 600, line-height 1.2
 
-### BPM Detection
+## LAYOUT-01: Card-based Rhythmcore layout
+- [x] **LAYOUT-01**: Redesign drop zone as a surface card (8px radius, subtle border, shadow)
+- [x] **LAYOUT-02**: Redesign upload panel area as surface card
+- [x] **LAYOUT-03**: Redesign result area as compact metric card
+- [x] **LAYOUT-04**: Card-padding 24px, gap 16px, section-padding 80px
+- [x] **LAYOUT-05**: More compact dashboard hierarchy (less whitespace between sections)
 
-- [x] **BPM-01**: User can upload an audio file (MP3, WAV, FLAC, OGG) and see the detected BPM displayed on screen
-- [x] **BPM-02**: BPM detection uses essentia.js WASM with onset detection + periodicity estimation for accuracy
-- [x] **BPM-03**: Detection shows progress/loading state while processing
-- [x] **BPM-04**: Detection result displays BPM as integer, with confidence indicator
-- [x] **BPM-05**: Display BPM range classification (Largo, Andante, Moderato, Allegro, Presto, etc.) with contextual helper modal
+## MOTION-01: Add Rhythmcore transitions
+- [x] **MOTION-01**: Add staggered entrance animation to result card (stagger children)
+- [x] **MOTION-02**: Add hover lift effect to cards (`translateY(-2px)` + shadow)
+- [x] **MOTION-03**: Add scroll-triggered fade-in for main sections
+- [x] **MOTION-04**: Smooth restrained easing (cubic-bezier) across all transitions
+- [x] **MOTION-05**: Preserve reduced-motion support
 
-### File Handling
+## COMP-01: Component refinements
+- [x] **COMP-01**: Buttons use primary/accent colors with 8px radius
+- [x] **COMP-02**: Button hover states with lift effect
+- [x] **COMP-03**: Result BPM uses JetBrains Mono with display-lg sizing
+- [x] **COMP-04**: Loading spinner styled with primary cyan
+- [x] **COMP-05**: Error state styled as surface card with border
 
-- [x] **FILE-01**: User can select files via `<input type="file">` button
-- [x] **FILE-02**: User can drag-and-drop audio files onto a drop zone
-- [x] **FILE-03**: Accepted file types displayed on drop zone (MP3, WAV, FLAC, OGG)
-- [x] **FILE-04**: Clear error feedback for unsupported file types
-- [x] **FILE-05**: Clear error feedback for files that fail to decode
+## RESP-01: Responsive adjustments
+- [x] **RESP-01**: Mobile adjustments preserve Rhythmcore density
+- [x] **RESP-02**: All sections stack correctly below 480px
+- [x] **RESP-03**: BPM display scales down gracefully on mobile (3rem)
 
-### UI/UX
-
-- [x] **UI-01**: Clean, minimal layout — single purpose per viewport
-- [x] **UI-02**: Dark/light theme toggle with persisted preference
-- [x] **UI-03**: Responsive — works on mobile, tablet, desktop
-- [x] **UI-04**: Typography follows impeccable brand register principles (distinctive font, deliberate hierarchy)
-- [x] **UI-05**: No placeholder content, no fake metrics, no generic AI design patterns
-- [x] **UI-06**: Color strategy: restrained with one committed accent color
-- [x] **UI-07**: Ample whitespace, deliberate spacing, no decorative glassmorphism or gradient text
-
-### Deployment
-
-- [x] **DEP-01**: All files self-contained in the repo (no CDN-dependency for core functionality)
-- [x] **DEP-02**: Single `index.html` entry point (or minimal multi-file structure)
-- [x] **DEP-03**: Deployable to GitHub Pages with zero config
-- [x] **DEP-04**: Works offline after initial page load (Service Worker for essentia.js WASM caching)
-
-## v2 Requirements (future)
-
-### Enhancements
-
-- **BPM-06**: Tap tempo button for manual BPM detection
-- **BPM-07**: Export/share BPM result via URL parameter
-- **BPM-08**: Audio waveform visualization
-- **BPM-09**: Multiple file upload queue
-
-## Out of Scope
-
-| Feature | Reason |
-|---------|--------|
-| YouTube link BPM detection | Requires backend proxy to extract audio — violates no-backend constraint |
-| Backend processing | Defeats purpose of private, serverless, static deployment |
-| User accounts / history | Adds complexity without core value |
-| Audio editing | BPM finder is a tool, not a DAW |
-| Real-time microphone BPM | Interesting but adds complexity; defer to v2 |
-
-## Traceability
-
-| Requirement | Phase | Status |
-|-------------|-------|--------|
-| BPM-01 | Phase 1 | ✅ Complete |
-| BPM-02 | Phase 1 | ✅ Complete |
-| BPM-03 | Phase 1 | ✅ Complete |
-| BPM-04 | Phase 1 | ✅ Complete |
-| BPM-05 | Phase 3 | ✅ Complete |
-| FILE-01 | Phase 1 | ✅ Complete |
-| FILE-02 | Phase 2 | ✅ Complete |
-| FILE-03 | Phase 2 | ✅ Complete |
-| FILE-04 | Phase 1 | ✅ Complete |
-| FILE-05 | Phase 1 | ✅ Complete |
-| UI-01 | Phase 1 | ✅ Complete |
-| UI-02 | Phase 2 | ✅ Complete |
-| UI-03 | Phase 1 | ✅ Complete |
-| UI-04 | Phase 1 | ✅ Complete |
-| UI-05 | Phase 1 | ✅ Complete |
-| UI-06 | Phase 1 | ✅ Complete |
-| UI-07 | Phase 1 | ✅ Complete |
-| DEP-01 | Phase 1 | ✅ Complete |
-| DEP-02 | Phase 1 | ✅ Complete |
-| DEP-03 | Phase 2 | ✅ Complete |
-| DEP-04 | Phase 2 | ✅ Complete |
-
-**Coverage:**
-- v1 requirements: 21 total
-- Mapped to phases: 21
-- Completed: 21 ✓
+---
+## Verificado ✅
+All 25 requirements delivered and verified in browser. Phase 4 complete.

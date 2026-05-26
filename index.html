@@ -13,9 +13,12 @@
   <link rel="canonical" href="https://fecolinhares.github.io/BPMfinder/">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎵</text></svg>">
 
-  <!-- Preconnect to CDN for faster WASM loading -->
+  <!-- Preconnect to CDN and Google Fonts -->
   <link rel="preconnect" href="https://cdn.jsdelivr.net">
   <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
 
   <!-- Structured data: WebApplication -->
   <script type="application/ld+json">
@@ -49,105 +52,119 @@
     /* --- Reset --- */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    /* --- Design Tokens --- */
+    /* --- Design Tokens (Rhythmcore-based) --- */
     :root {
-      /* Typography — system font stack (product register) */
-      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
-      --font-mono: ui-monospace, "SF Mono", "Cascadia Code", "Roboto Mono", Menlo, monospace;
-      
-      /* Fixed rem scale — 4 sizes */
+      /* Typography — Rhythmcore */
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', 'Cascadia Code', 'Roboto Mono', Menlo, monospace;
+
+      /* Type scale — Rhythmcore display-lg: 64px/500, body-md: 16px/400, label-md: 12px/600 mono */
       --text-xs: 0.75rem;    /* 12px — captions */
-      --text-sm: 0.875rem;   /* 14px — metadata, secondary */
-      --text-base: 1rem;     /* 16px — body */
+      --text-sm: 0.875rem;   /* 14px — metadata */
+      --text-base: 1rem;     /* 16px — body (body-md) */
       --text-lg: 1.25rem;    /* 20px — subheadings */
-      --text-xl: 2rem;       /* 32px — hero */
-      --text-2xl: 2.5rem;    /* 40px — large hero */
-      
-      /* Spacing — 4pt base */
-      --space-1: 0.25rem;   /*  4px */
-      --space-2: 0.5rem;    /*  8px */
-      --space-3: 0.75rem;   /* 12px */
-      --space-4: 1rem;      /* 16px */
-      --space-6: 1.5rem;    /* 24px */
-      --space-8: 2rem;      /* 32px */
-      --space-12: 3rem;     /* 48px */
-      --space-16: 4rem;     /* 64px */
-      
-      /* Radii */
-      --radius-sm: 6px;
-      --radius-md: 10px;
-      --radius-lg: 16px;
-      
-      /* Transitions */
-      --transition-fast: 150ms ease;
-      --transition-base: 200ms ease;
-      
-      /* Elevation (dark mode) */
-      --elevation-1: rgba(255, 255, 255, 0.04);
-      --elevation-2: rgba(255, 255, 255, 0.07);
-      --elevation-3: rgba(255, 255, 255, 0.10);
+      --text-xl: 2rem;       /* 32px */
+      --text-2xl: 2.5rem;    /* 40px */
+      --text-display: 4rem;  /* 64px — display-lg for BPM */
+
+      /* Spacing — Rhythmcore: base 8px, gap 16px, card-padding 24px, section-padding 80px */
+      --space-1: 0.25rem;    /*  4px */
+      --space-2: 0.5rem;     /*  8px — base */
+      --space-3: 0.75rem;    /* 12px */
+      --space-4: 1rem;       /* 16px — gap */
+      --space-5: 1.25rem;    /* 20px */
+      --space-6: 1.5rem;     /* 24px — card-padding */
+      --space-8: 2rem;       /* 32px */
+      --space-12: 3rem;      /* 48px */
+      --space-16: 4rem;      /* 64px */
+
+      /* Radii — Rhythmcore: card 8px, control 8px, pill 9999px */
+      --radius-card: 8px;
+      --radius-control: 8px;
+      --radius-pill: 9999px;
+
+      /* Transitions — Rhythmcore: smooth, restrained */
+      --transition-fast: 150ms cubic-bezier(0.16, 1, 0.3, 1);
+      --transition-base: 250ms cubic-bezier(0.16, 1, 0.3, 1);
+      --transition-slow: 400ms cubic-bezier(0.16, 1, 0.3, 1);
+
+      /* Shadows — Rhythmcore card depth */
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.06), 0 1px 4px rgba(0,0,0,0.04);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
+      --shadow-lg: 0 8px 24px rgba(0,0,0,0.10), 0 4px 8px rgba(0,0,0,0.06);
+      --shadow-hover: 0 12px 32px rgba(0,0,0,0.14), 0 4px 12px rgba(0,0,0,0.08);
     }
 
-    /* --- Dark Theme (default) --- */
+    /* --- Dark Theme (default) — Rhythmcore-inspired --- */
     [data-theme="dark"] {
-      /* Neutrals tinted toward warm amber (chroma 0.01) */
-      --bg-base: oklch(0.08 0.01 60);
-      --bg-surface: oklch(0.12 0.01 60);
-      --bg-elevated: oklch(0.16 0.01 60);
-      --bg-hover: oklch(0.20 0.01 60);
-      
-      --text-primary: oklch(0.92 0.005 60);
-      --text-secondary: oklch(0.65 0.008 60);
-      --text-tertiary: oklch(0.45 0.008 60);
-      
-      --border-subtle: oklch(0.20 0.01 60);
-      --border-default: oklch(0.28 0.01 60);
-      
-      /* Accent — warm amber (not blue, not purple) */
+      /* Rhythmcore primary: #06B6D4 (cyan), accent: #F97316 (amber) */
+      --primary: oklch(0.65 0.14 195);
+      --primary-hover: oklch(0.70 0.14 195);
+      --primary-dim: oklch(0.65 0.14 195 / 0.15);
+      --primary-glow: oklch(0.65 0.14 195 / 0.08);
+
       --accent: oklch(0.70 0.14 75);
       --accent-hover: oklch(0.75 0.14 75);
       --accent-dim: oklch(0.70 0.14 75 / 0.15);
       --accent-glow: oklch(0.70 0.14 75 / 0.08);
-      
+
+      /* Surface hierarchy — Rhythmcore card system */
+      --bg-base: oklch(0.07 0.01 60);
+      --bg-surface: oklch(0.11 0.01 60);     /* card background */
+      --bg-elevated: oklch(0.14 0.01 60);    /* elevated card (hover) */
+      --bg-hover: oklch(0.18 0.01 60);
+
+      --text-primary: oklch(0.92 0.005 60);
+      --text-secondary: oklch(0.65 0.008 60);
+      --text-tertiary: oklch(0.45 0.008 60);
+
+      /* Border system — subtle, matte */
+      --border-subtle: oklch(0.18 0.01 60);
+      --border-default: oklch(0.25 0.01 60);
+      --border-accent: oklch(0.65 0.14 195 / 0.3);
+
+      /* Card surface shadow */
+      --card-bg: oklch(0.11 0.01 60);
+      --card-border: oklch(0.18 0.01 60);
+
       /* Semantic */
       --success: oklch(0.65 0.14 150);
       --error: oklch(0.60 0.18 30);
       --warning: oklch(0.72 0.12 85);
-      
-      /* Drop zone */
-      --drop-border: oklch(0.30 0.01 60);
-      --drop-bg: oklch(0.12 0.01 60);
-      --drop-active-border: var(--accent);
-      --drop-active-bg: var(--accent-dim);
     }
 
-    /* --- Light Theme --- */
+    /* --- Light Theme — Rhythmcore original tokens --- */
     [data-theme="light"] {
-      --bg-base: oklch(0.97 0.005 60);
-      --bg-surface: oklch(0.995 0.002 60);
-      --bg-elevated: oklch(1 0 0);
-      --bg-hover: oklch(0.93 0.005 60);
-      
-      --text-primary: oklch(0.15 0.01 60);
-      --text-secondary: oklch(0.45 0.008 60);
-      --text-tertiary: oklch(0.60 0.005 60);
-      
-      --border-subtle: oklch(0.88 0.005 60);
-      --border-default: oklch(0.80 0.005 60);
-      
+      --primary: oklch(0.55 0.16 195);
+      --primary-hover: oklch(0.50 0.16 195);
+      --primary-dim: oklch(0.55 0.16 195 / 0.10);
+      --primary-glow: oklch(0.55 0.16 195 / 0.06);
+
       --accent: oklch(0.55 0.16 75);
       --accent-hover: oklch(0.50 0.16 75);
       --accent-dim: oklch(0.55 0.16 75 / 0.10);
       --accent-glow: oklch(0.55 0.16 75 / 0.06);
-      
+
+      /* Rhythmcore light: bg #FFFFFF, surface #4A5568, text-primary #111827 */
+      --bg-base: oklch(0.97 0.005 60);
+      --bg-surface: oklch(0.995 0.002 60);
+      --bg-elevated: oklch(1 0 0);
+      --bg-hover: oklch(0.93 0.005 60);
+
+      --text-primary: oklch(0.15 0.01 60);
+      --text-secondary: oklch(0.45 0.008 60);
+      --text-tertiary: oklch(0.60 0.005 60);
+
+      --border-subtle: oklch(0.88 0.005 60);
+      --border-default: oklch(0.80 0.005 60);
+      --border-accent: oklch(0.55 0.16 195 / 0.3);
+
+      --card-bg: oklch(0.995 0.002 60);
+      --card-border: oklch(0.88 0.005 60);
+
       --success: oklch(0.55 0.15 150);
       --error: oklch(0.55 0.20 30);
       --warning: oklch(0.65 0.14 85);
-      
-      --drop-border: oklch(0.78 0.005 60);
-      --drop-bg: oklch(0.97 0.005 60);
-      --drop-active-border: var(--accent);
-      --drop-active-bg: var(--accent-dim);
     }
 
     /* --- Base --- */
@@ -155,9 +172,10 @@
     body {
       font-family: var(--font-sans);
       font-size: var(--text-base);
+      font-weight: 400;
+      line-height: 1.6;
       color: var(--text-primary);
       background: var(--bg-base);
-      line-height: 1.5;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
       min-height: 100dvh;
@@ -166,24 +184,40 @@
       transition: background var(--transition-base), color var(--transition-base);
     }
 
-    /* --- Layout --- */
+    /* --- App Container --- */
     .app {
-      max-width: 560px;
+      max-width: 480px;
       width: 100%;
       margin: 0 auto;
       padding: var(--space-6) var(--space-6);
       flex: 1;
       display: flex;
       flex-direction: column;
-      gap: var(--space-8);
+      gap: var(--space-4);
     }
 
-    /* --- Header --- */
+    /* --- Rhythmcore Card --- */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-card);
+      box-shadow: var(--shadow-sm);
+      transition: all var(--transition-base);
+    }
+    .card:hover {
+      box-shadow: var(--shadow-hover);
+      transform: translateY(-2px);
+    }
+    .card-padded {
+      padding: var(--space-6);
+    }
+
+    /* --- Header (Rhythmcore compact) --- */
     .header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding-top: var(--space-4);
+      padding: var(--space-3) var(--space-4);
     }
     .logo {
       display: flex;
@@ -195,14 +229,15 @@
     .logo-icon {
       width: 32px;
       height: 32px;
-      border-radius: var(--radius-sm);
-      background: var(--accent-dim);
+      border-radius: var(--radius-control);
+      background: var(--primary-dim);
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: var(--text-lg);
     }
     .logo-text {
+      font-family: var(--font-sans);
       font-size: var(--text-base);
       font-weight: 600;
       letter-spacing: -0.02em;
@@ -211,11 +246,11 @@
       color: var(--accent);
     }
 
-    /* --- Theme Toggle --- */
+    /* --- Theme Toggle (Rhythmcore control) --- */
     .theme-toggle {
-      background: none;
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-sm);
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-control);
       width: 36px;
       height: 36px;
       display: flex;
@@ -224,40 +259,46 @@
       cursor: pointer;
       color: var(--text-secondary);
       font-size: var(--text-base);
+      font-family: var(--font-sans);
       transition: all var(--transition-fast);
+      box-shadow: var(--shadow-sm);
     }
     .theme-toggle:hover {
-      background: var(--bg-hover);
+      background: var(--bg-elevated);
       color: var(--text-primary);
       border-color: var(--border-default);
+      box-shadow: var(--shadow-md);
+      transform: translateY(-1px);
     }
 
-    /* --- Hero --- */
+    /* --- Hero (Rhythmcore compact) --- */
     .hero {
       text-align: center;
-      padding: var(--space-4) 0 0;
+      padding: var(--space-4) var(--space-4) 0;
     }
     .hero h1 {
-      font-size: var(--text-2xl);
-      font-weight: 700;
-      letter-spacing: -0.03em;
+      font-family: var(--font-sans);
+      font-size: var(--text-xl);
+      font-weight: 500;
+      letter-spacing: -0.02em;
       line-height: 1.15;
-      margin-bottom: var(--space-3);
+      margin-bottom: var(--space-2);
     }
     .hero h1 span { color: var(--accent); }
     .hero p {
       font-size: var(--text-sm);
       color: var(--text-secondary);
-      max-width: 400px;
+      max-width: 360px;
       margin: 0 auto;
+      line-height: 1.5;
     }
 
-    /* --- Drop Zone --- */
+    /* --- Drop Zone (Rhythmcore surface card) --- */
     .drop-zone {
       position: relative;
-      border: 2px dashed var(--drop-border);
-      border-radius: var(--radius-lg);
-      background: var(--drop-bg);
+      border-radius: var(--radius-card);
+      background: var(--card-bg);
+      border: 1px dashed var(--border-default);
       padding: var(--space-12) var(--space-6);
       text-align: center;
       cursor: pointer;
@@ -266,42 +307,50 @@
       flex-direction: column;
       align-items: center;
       gap: var(--space-4);
+      box-shadow: var(--shadow-sm);
     }
     .drop-zone:hover {
-      border-color: var(--border-default);
-      background: var(--bg-hover);
+      border-color: var(--border-accent);
+      background: var(--bg-elevated);
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
     }
     .drop-zone.drag-over {
-      border-color: var(--drop-active-border);
-      background: var(--drop-active-bg);
-      transform: scale(1.01);
+      border-color: var(--primary);
+      border-style: solid;
+      background: var(--primary-dim);
+      box-shadow: var(--shadow-lg), 0 0 24px var(--primary-glow);
+      transform: translateY(-2px) scale(1.02);
     }
     .drop-zone.has-file {
       border-style: solid;
-      border-color: var(--border-subtle);
+      border-color: var(--card-border);
       padding: var(--space-6);
       cursor: default;
     }
     .drop-zone.has-file:hover {
-      border-color: var(--border-subtle);
-      background: var(--drop-bg);
+      border-color: var(--card-border);
+      background: var(--card-bg);
+      transform: none;
+      box-shadow: var(--shadow-sm);
     }
     .drop-zone.hidden { display: none; }
 
     .drop-icon {
       width: 48px;
       height: 48px;
-      border-radius: var(--radius-md);
-      background: var(--accent-dim);
+      border-radius: var(--radius-control);
+      background: var(--primary-dim);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 24px;
+      font-size: 22px;
       transition: transform var(--transition-base);
     }
-    .drag-over .drop-icon { transform: scale(1.1); }
+    .drag-over .drop-icon { transform: scale(1.1) rotate(-5deg); }
 
     .drop-label {
+      font-family: var(--font-sans);
       font-size: var(--text-base);
       font-weight: 500;
     }
@@ -312,9 +361,11 @@
     .drop-hint code {
       font-family: var(--font-mono);
       font-size: var(--text-xs);
-      background: var(--bg-hover);
+      font-weight: 600;
+      background: var(--bg-elevated);
       padding: 2px 8px;
       border-radius: 4px;
+      border: 1px solid var(--border-subtle);
     }
 
     /* Hidden file input */
@@ -325,7 +376,7 @@
       cursor: pointer;
     }
 
-    /* --- File Info --- */
+    /* --- Upload Panel (surface card) --- */
     .upload-panel {
       display: none;
       flex-direction: column;
@@ -338,8 +389,8 @@
       align-items: center;
       gap: var(--space-3);
       padding: var(--space-3) var(--space-4);
-      background: var(--bg-elevated);
-      border-radius: var(--radius-sm);
+      background: var(--bg-surface);
+      border-radius: var(--radius-control);
       width: 100%;
     }
     .file-info-icon {
@@ -347,8 +398,9 @@
       flex-shrink: 0;
     }
     .file-info-name {
+      font-family: var(--font-mono);
       font-size: var(--text-sm);
-      font-weight: 500;
+      font-weight: 600;
       flex: 1;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -356,7 +408,9 @@
       text-align: left;
     }
     .file-info-size {
+      font-family: var(--font-mono);
       font-size: var(--text-xs);
+      font-weight: 400;
       color: var(--text-tertiary);
       flex-shrink: 0;
     }
@@ -373,15 +427,15 @@
     }
     .file-info-clear:hover { color: var(--text-primary); }
 
-    /* --- Analyze Button --- */
+    /* --- Analyze/Retry Button (Rhythmcore) --- */
     .analyze-btn {
       width: 100%;
       padding: var(--space-3) var(--space-6);
+      font-family: var(--font-sans);
       font-size: var(--text-base);
       font-weight: 600;
-      font-family: var(--font-sans);
       border: none;
-      border-radius: var(--radius-md);
+      border-radius: var(--radius-control);
       background: var(--accent);
       color: var(--bg-base);
       cursor: pointer;
@@ -390,10 +444,12 @@
       align-items: center;
       justify-content: center;
       gap: var(--space-2);
+      box-shadow: var(--shadow-sm);
     }
     .analyze-btn:hover:not(:disabled) {
       background: var(--accent-hover);
-      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
     }
     .analyze-btn:active:not(:disabled) {
       transform: translateY(0);
@@ -407,7 +463,7 @@
       outline-offset: 2px;
     }
 
-    /* --- Loading State --- */
+    /* --- Loading State (Rhythmcore compact) --- */
     .loading {
       display: none;
       flex-direction: column;
@@ -419,12 +475,12 @@
     .loading.visible { display: flex; }
 
     .spinner {
-      width: 40px;
-      height: 40px;
+      width: 36px;
+      height: 36px;
       border: 3px solid var(--border-subtle);
-      border-top-color: var(--accent);
+      border-top-color: var(--primary);
       border-radius: 50%;
-      animation: spin 0.8s linear infinite;
+      animation: spin 0.7s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
@@ -432,36 +488,71 @@
       font-size: var(--text-sm);
       color: var(--text-secondary);
     }
-    .loading-label em { font-style: normal; color: var(--accent); }
+    .loading-label em {
+      font-style: normal;
+      color: var(--primary);
+      font-weight: 600;
+    }
 
-    /* --- Result --- */
+    /* --- Result Card (Rhythmcore display card) --- */
     .result {
       display: none;
       flex-direction: column;
       align-items: center;
       gap: var(--space-3);
       text-align: center;
+      padding: var(--space-6);
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-card);
+      box-shadow: var(--shadow-sm);
     }
-    .result.visible { display: flex; }
+    .result.visible {
+      display: flex;
+      animation: card-enter var(--transition-slow) both;
+    }
+    .result.visible > * {
+      opacity: 0;
+      animation: stagger-fade-in var(--transition-slow) both;
+    }
+    .result.visible > *:nth-child(1) { animation-delay: 0ms; }
+    .result.visible > *:nth-child(2) { animation-delay: 80ms; }
+    .result.visible > *:nth-child(3) { animation-delay: 160ms; }
+    .result.visible > *:nth-child(4) { animation-delay: 240ms; }
+    .result.visible > *:nth-child(5) { animation-delay: 320ms; }
+    .result.visible > *:nth-child(6) { animation-delay: 400ms; }
+
+    @keyframes card-enter {
+      from { opacity: 0; transform: scale(0.96) translateY(-8px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    @keyframes stagger-fade-in {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
 
     .result-bpm {
-      font-size: 5rem;
-      font-weight: 800;
+      font-family: var(--font-mono);
+      font-size: var(--text-display);
+      font-weight: 700;
       letter-spacing: -0.04em;
-      line-height: 1;
+      line-height: 1.04;
       color: var(--accent);
       font-variant-numeric: tabular-nums;
     }
     .result-label {
-      font-size: var(--text-sm);
-      color: var(--text-secondary);
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      font-weight: 600;
+      color: var(--text-tertiary);
       text-transform: uppercase;
       letter-spacing: 0.08em;
     }
     .bpm-confidence {
-      font-size: var(--text-xs);
-      color: var(--text-tertiary);
       font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      font-weight: 600;
+      color: var(--text-tertiary);
       transition: color var(--transition-base);
     }
     .bpm-confidence.confidence-good { color: var(--success); }
@@ -471,7 +562,7 @@
       font-size: var(--text-sm);
       color: var(--text-secondary);
       letter-spacing: 0.04em;
-      margin-top: var(--space-1);
+      margin-top: 0;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -505,16 +596,16 @@
       outline-offset: 2px;
     }
 
-    /* --- Tempo Dialog --- */
+    /* --- Tempo Dialog (Rhythmcore) --- */
     .tempo-dialog {
       padding: 0;
-      border: none;
-      border-radius: var(--radius-lg);
-      background: var(--bg-elevated);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-card);
+      background: var(--card-bg);
       color: var(--text-primary);
       max-width: 420px;
       width: 90vw;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+      box-shadow: var(--shadow-lg);
       overflow: hidden;
       animation: dialog-enter 300ms cubic-bezier(0.16, 1, 0.3, 1);
     }
@@ -543,10 +634,11 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: var(--space-8) var(--space-6);
+      padding: var(--space-6) var(--space-5);
       border-bottom: 1px solid var(--border-subtle);
     }
     .tempo-dialog-title {
+      font-family: var(--font-sans);
       font-size: var(--text-base);
       font-weight: 600;
       letter-spacing: -0.01em;
@@ -557,12 +649,12 @@
       color: var(--text-tertiary);
       cursor: pointer;
       position: absolute;
-      right: var(--space-6);
+      right: var(--space-5);
       top: 50%;
       transform: translateY(-50%);
       width: 28px;
       height: 28px;
-      border-radius: 6px;
+      border-radius: var(--radius-control);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -592,11 +684,12 @@
     .tempo-table th {
       text-align: left;
       padding: var(--space-2) var(--space-3);
+      font-family: var(--font-mono);
       font-size: var(--text-xs);
+      font-weight: 600;
       color: var(--text-tertiary);
       text-transform: uppercase;
       letter-spacing: 0.06em;
-      font-weight: 500;
       border-bottom: 1px solid var(--border-subtle);
       white-space: nowrap;
     }
@@ -610,9 +703,10 @@
 
     .tempo-term { font-weight: 600; }
     .tempo-range {
-      color: var(--text-tertiary);
       font-family: var(--font-mono);
       font-size: var(--text-xs);
+      font-weight: 600;
+      color: var(--text-tertiary);
       white-space: nowrap;
     }
     .tempo-desc {
@@ -628,15 +722,17 @@
 
     @media (prefers-reduced-motion: reduce) {
       .tempo-dialog { animation: fade-in 200ms ease-out; }
+      .result.visible { animation: none; }
+      .result.visible > * { animation: none; opacity: 1; }
     }
 
-    /* --- Error --- */
+    /* --- Error (surface card with accent border) --- */
     .error {
       display: none;
       padding: var(--space-3) var(--space-4);
-      background: var(--accent-dim);
+      background: var(--card-bg);
       border: 1px solid var(--error);
-      border-radius: var(--radius-sm);
+      border-radius: var(--radius-control);
       color: var(--error);
       font-size: var(--text-sm);
       text-align: center;
@@ -647,51 +743,59 @@
     .actions {
       display: flex;
       gap: var(--space-3);
-      margin-top: var(--space-2);
+      width: 100%;
     }
     .actions button {
+      flex: 1;
       padding: var(--space-2) var(--space-4);
+      font-family: var(--font-sans);
       font-size: var(--text-sm);
       font-weight: 500;
-      font-family: var(--font-sans);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-sm);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-control);
       background: var(--bg-surface);
       color: var(--text-secondary);
       cursor: pointer;
       transition: all var(--transition-fast);
     }
     .actions button:hover {
-      background: var(--bg-hover);
+      background: var(--bg-elevated);
       color: var(--text-primary);
       border-color: var(--border-default);
+      box-shadow: var(--shadow-sm);
+      transform: translateY(-1px);
     }
 
     /* --- Footer --- */
     .footer {
       text-align: center;
-      padding: var(--space-6) 0;
+      padding: var(--space-6) 0 var(--space-4);
       font-size: var(--text-xs);
       color: var(--text-tertiary);
     }
     .footer a {
       color: var(--text-secondary);
       text-decoration: none;
+      transition: color var(--transition-fast);
     }
     .footer a:hover { color: var(--text-primary); }
 
-    /* --- Responsive --- */
+    /* --- Responsive (mobile) --- */
     @media (max-width: 480px) {
-      .app { padding: var(--space-4) var(--space-4); gap: var(--space-6); }
-      .hero h1 { font-size: var(--text-xl); }
+      .app { padding: var(--space-4); gap: var(--space-3); }
+      .hero h1 { font-size: var(--text-lg); }
+      .hero { padding: var(--space-3) var(--space-3) 0; }
       .drop-zone { padding: var(--space-8) var(--space-4); }
-      .result-bpm { font-size: 3.5rem; }
+      .result { padding: var(--space-4); }
+      .result-bpm { font-size: 3rem; }
+      :root { --text-display: 3rem; }
     }
 
     /* --- Reduced Motion --- */
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
         animation-duration: 0.01ms !important;
+        animation-delay: 0ms !important;
         transition-duration: 0.01ms !important;
       }
     }
@@ -715,15 +819,15 @@
     </section>
 
     <!-- Drop Zone -->
-    <div class="drop-zone" id="dropZone">
+    <div class="drop-zone card" id="dropZone">
       <input type="file" class="file-input" id="fileInput" accept="audio/*">
-      <div class="drop-icon" role="img" aria-label="Musical notes">🎵</div>
+      <div class="drop-icon" role="img" aria-label="Musical notes">♪</div>
       <div class="drop-label">Drop an audio file here</div>
       <div class="drop-hint">or click to browse · <code>MP3</code> <code>WAV</code> <code>FLAC</code> <code>OGG</code></div>
     </div>
 
     <!-- File Info + Analyze -->
-    <div id="uploadPanel" class="upload-panel">
+    <div id="uploadPanel" class="upload-panel card card-padded">
       <div class="file-info" id="fileInfo">
         <span class="file-info-icon">🎵</span>
         <span class="file-info-name" id="fileName">—</span>
@@ -741,7 +845,7 @@
       <div class="loading-label">Analyzing <em id="loadingFileName">audio</em>…</div>
     </div>
 
-    <!-- Result -->
+    <!-- Result Card -->
     <div class="result" id="result">
       <div class="result-label">Beats Per Minute</div>
       <div class="result-bpm" id="bpmValue">—</div>

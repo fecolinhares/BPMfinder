@@ -53,33 +53,61 @@
 Reset universal `margin: 0` anulava `margin: auto` nativo do `<dialog>`. UA `inset: 0` criava layout over-constrained. Fix: `.tempo-dialog:modal { top: 50%; left: 50%; transform: translate(-50%, -50%); }`.
 
 ## Enhancement: Modal header spacing ✅
-
 - **Problem:** `--space-5` não existia nos tokens → padding inválido (0)
 - **Fix:** `padding: var(--space-8) var(--space-6)` → 32px vertical, 24px horizontal
 - **Commit:** `6aab88c`
 
 ## Enhancement: Modal header title centralizado ✅
-
 - Título centralizado horizontalmente, botão de fechar com `position: absolute; right: var(--space-6)`
 
 ## Enhancement: Auto-Analyze on File Select ✅
-
 - **Antes:** selecionar arquivo → botão "Analyze BPM" → clicar → analisar
 - **Depois:** selecionar arquivo → análise começa automaticamente
 - Botão "Analyze BPM" vira retry (aparece só em caso de erro)
 - **Commit:** `5f532a2`
 
 ## Enhancement: Footer simplificado ✅
-
 - Removida menção explícita ao essentia.js do footer
 - "No uploads · No servers · Open source" com link para essentia.upf.edu
 
 ## License ✅
-
 - **MIT** — copyright Feco Linhares, use com créditos
 - **Commit:** `6eb38d6`
 
-## Status Atual
+## SEO + Perf ✅
+- robots.txt, sitemap.xml, canonical URL, JSON-LD schema
+- preconnect + dns-prefetch CDN, async CDN scripts
+- **Commit:** `353ae60`
 
-**Todas as fases completas.** App funcional e deployado.
-BPM detection com confidence percentual colorido, modal de referência de tempo, auto-analyze on file select, tema dark/light.
+---
+
+## Phase 4 — Rhythmcore Visual Redesign ✅
+
+**Goal:** Apply the Rhythmcore Interface design system (DESIGN.md) to transform the BPMfinder visual language — typography, palette, card layout, and motion.
+
+**Delivered:**
+- [x] Google Fonts: Inter (sans) + JetBrains Mono (mono) loaded
+- [x] Color tokens: primary cyan #06B6D4 (oklch 0.65 0.14 195), accent amber #F97316, surface hierarchy
+- [x] Typography: Inter for display/body, JetBrains Mono for labels/BPM
+- [x] Display-lg type scale: 64px, weight 500, line-height 1.04
+- [x] Card system: `.card` class with surface bg, subtle border, shadow-depth
+- [x] Drop zone redesigned as surface card with primary-cyan glow on drag-over
+- [x] Upload panel styled as card-padded surface
+- [x] Result card: compact metric card with card-enter animation
+- [x] Staggered entrance animation on result children (stagger-fade-in keyframes)
+- [x] Hover lift (translateY(-2px)) on cards, buttons, and theme toggle
+- [x] Smooth cubic-bezier(0.16, 1, 0.3, 1) transitions throughout
+- [x] Drag-over: primary cyan glow + scale(1.02) + solid border
+- [x] BPM display: JetBrains Mono, 64px, amber accent, tabular-nums
+- [x] Confidence: JetBrains Mono, semantic colors (green/amber/red)
+- [x] Labels: JetBrains Mono, uppercase, letter-spaced
+- [x] Spinner: primary cyan top border
+- [x] Error: surface card with error-colored border
+- [x] Buttons: 8px radius, accent bg, hover lift
+- [x] All cards use 8px radius (--radius-card)
+- [x] Dialog: updated with Rhythmcore radii, borders, and table fonts
+- [x] Dark mode: surface-based card hierarchy preserved
+- [x] Light mode: Rhythmcore original tokens (bg white, surface mid, text dark)
+- [x] Reduced-motion: overrides card-enter, stagger-fade-in, dialog-enter
+- [x] Responsive mobile: BPM at 3rem, tighter padding, full-width cards
+- [x] All existing JS intact: BPM detection, tempo modal, theme toggle, service worker
