@@ -27,6 +27,11 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
+      - name: Inject secrets (Google Search Console + GA4)
+        run: |
+          sed -i "s/GOOGLE_SITE_VERIFICATION_PLACEHOLDER/${{ secrets.GOOGLE_SITE_VERIFICATION }}/g" index.html
+          sed -i "s/GA_MEASUREMENT_ID_PLACEHOLDER/${{ secrets.GA_MEASUREMENT_ID }}/g" index.html
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
