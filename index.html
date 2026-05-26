@@ -66,6 +66,7 @@
       --text-xl: 2rem;       /* 32px */
       --text-2xl: 2.5rem;    /* 40px */
       --text-display: 4rem;  /* 64px — display-lg for BPM */
+      --text-label: 0.75rem; /* 12px — label-md: JetBrains Mono 600 1.2 */
 
       /* Spacing — Rhythmcore: base 8px, gap 16px, card-padding 24px, section-padding 80px */
       --space-1: 0.25rem;    /*  4px */
@@ -77,6 +78,10 @@
       --space-8: 2rem;       /* 32px */
       --space-12: 3rem;      /* 48px */
       --space-16: 4rem;      /* 64px */
+      --space-20: 5rem;      /* 80px — section-padding */
+
+      /* Secondary token (Rhythmcore) */
+      --secondary: oklch(1 0 0); /* #FFFFFF */
 
       /* Radii — Rhythmcore: card 8px, control 8px, pill 9999px */
       --radius-card: 8px;
@@ -133,34 +138,35 @@
       --warning: oklch(0.72 0.12 85);
     }
 
-    /* --- Light Theme — Rhythmcore original tokens --- */
+    /* --- Light Theme — Rhythmcore exact palette --- */
     [data-theme="light"] {
-      --primary: oklch(0.55 0.16 195);
-      --primary-hover: oklch(0.50 0.16 195);
-      --primary-dim: oklch(0.55 0.16 195 / 0.10);
-      --primary-glow: oklch(0.55 0.16 195 / 0.06);
+      /* Rhythmcore exact hex: primary #06B6D4, accent #F97316, bg #FFFFFF, surface #4A5568 */
+      --primary: oklch(0.62 0.16 195);       /* #06B6D4 */
+      --primary-hover: oklch(0.57 0.16 195);
+      --primary-dim: oklch(0.62 0.16 195 / 0.12);
+      --primary-glow: oklch(0.62 0.16 195 / 0.06);
 
-      --accent: oklch(0.55 0.16 75);
-      --accent-hover: oklch(0.50 0.16 75);
-      --accent-dim: oklch(0.55 0.16 75 / 0.10);
-      --accent-glow: oklch(0.55 0.16 75 / 0.06);
+      --accent: oklch(0.62 0.18 55);          /* #F97316 */
+      --accent-hover: oklch(0.57 0.18 55);
+      --accent-dim: oklch(0.62 0.18 55 / 0.12);
+      --accent-glow: oklch(0.62 0.18 55 / 0.06);
 
-      /* Rhythmcore light: bg #FFFFFF, surface #4A5568, text-primary #111827 */
-      --bg-base: oklch(0.97 0.005 60);
-      --bg-surface: oklch(0.995 0.002 60);
-      --bg-elevated: oklch(1 0 0);
-      --bg-hover: oklch(0.93 0.005 60);
+      /* Exact Rhythmcore hexes mapped to OKLCH */
+      --bg-base: oklch(1 0 0);                /* #FFFFFF */
+      --bg-surface: oklch(0.97 0.005 260);    /* #F3F4F6 — just off-white for surface distinction */
+      --bg-elevated: oklch(1 0 0);            /* #FFFFFF */
+      --bg-hover: oklch(0.93 0.005 260);      /* #E5E7EB */
 
-      --text-primary: oklch(0.15 0.01 60);
-      --text-secondary: oklch(0.45 0.008 60);
-      --text-tertiary: oklch(0.60 0.005 60);
+      --text-primary: oklch(0.16 0.01 260);   /* #111827 */
+      --text-secondary: oklch(0.38 0.02 260); /* #4B5563 */
+      --text-tertiary: oklch(0.55 0.01 260);  /* #6B7280 */
 
-      --border-subtle: oklch(0.88 0.005 60);
-      --border-default: oklch(0.80 0.005 60);
-      --border-accent: oklch(0.55 0.16 195 / 0.3);
+      --border-subtle: oklch(0.90 0.005 260); /* #E5E7EB */
+      --border-default: oklch(0.82 0.005 260);/* #D1D5DB */
+      --border-accent: oklch(0.62 0.16 195 / 0.3);
 
-      --card-bg: oklch(0.995 0.002 60);
-      --card-border: oklch(0.88 0.005 60);
+      --card-bg: oklch(1 0 0);                /* #FFFFFF — cards on white bg need subtle separation */
+      --card-border: oklch(0.90 0.005 260);   /* #E5E7EB */
 
       --success: oklch(0.55 0.15 150);
       --error: oklch(0.55 0.20 30);
@@ -509,22 +515,34 @@
     }
     .result.visible {
       display: flex;
-      animation: card-enter var(--transition-slow) both;
+      animation: card-enter 500ms cubic-bezier(0.16, 1, 0.3, 1) both;
     }
     .result.visible > * {
       opacity: 0;
-      animation: stagger-fade-in var(--transition-slow) both;
+      animation: stagger-fade-in 400ms cubic-bezier(0.16, 1, 0.3, 1) both;
     }
-    .result.visible > *:nth-child(1) { animation-delay: 0ms; }
-    .result.visible > *:nth-child(2) { animation-delay: 80ms; }
-    .result.visible > *:nth-child(3) { animation-delay: 160ms; }
-    .result.visible > *:nth-child(4) { animation-delay: 240ms; }
-    .result.visible > *:nth-child(5) { animation-delay: 320ms; }
-    .result.visible > *:nth-child(6) { animation-delay: 400ms; }
+    .result.visible > *:nth-child(1) { animation-delay: 60ms; }
+    .result.visible > *:nth-child(2) { animation-delay: 140ms; }
+    .result.visible > *:nth-child(3) { animation-delay: 220ms; }
+    .result.visible > *:nth-child(4) { animation-delay: 300ms; }
+    .result.visible > *:nth-child(5) { animation-delay: 380ms; }
+    .result.visible > *:nth-child(6) { animation-delay: 460ms; }
 
+    /* Masked reveal for card-enter (Rhythmcore) */
     @keyframes card-enter {
-      from { opacity: 0; transform: scale(0.96) translateY(-8px); }
-      to   { opacity: 1; transform: scale(1) translateY(0); }
+      from {
+        opacity: 0;
+        clip-path: inset(0 0 100% 0);
+        transform: translateY(-8px);
+      }
+      60% {
+        clip-path: inset(0 0 0% 0);
+      }
+      to {
+        opacity: 1;
+        clip-path: inset(0 0 0% 0);
+        transform: translateY(0);
+      }
     }
     @keyframes stagger-fade-in {
       from { opacity: 0; transform: translateY(6px); }
@@ -534,8 +552,8 @@
     .result-bpm {
       font-family: var(--font-mono);
       font-size: var(--text-display);
-      font-weight: 700;
-      letter-spacing: -0.04em;
+      font-weight: 500;
+      letter-spacing: 0;
       line-height: 1.04;
       color: var(--accent);
       font-variant-numeric: tabular-nums;
@@ -627,6 +645,35 @@
     @keyframes fade-in {
       from { opacity: 0; }
       to   { opacity: 1; }
+    }
+
+    /* Ambient background pulse (Rhythmcore) — subtle, restrained */
+    @keyframes ambient-pulse {
+      0%, 100% { opacity: 0.03; }
+      50% { opacity: 0.06; }
+    }
+    .app::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: -1;
+      background:
+        radial-gradient(ellipse 60% 40% at 20% 50%, var(--primary) 0%, transparent 100%),
+        radial-gradient(ellipse 40% 30% at 80% 20%, var(--accent) 0%, transparent 100%);
+      animation: ambient-pulse 8s ease-in-out infinite;
+    }
+
+    /* Scroll-triggered entrance (Rhythmcore) — via IntersectionObserver */
+    .reveal {
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity 600ms cubic-bezier(0.16, 1, 0.3, 1),
+                  transform 600ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
     }
 
     .tempo-dialog-header {
@@ -724,6 +771,8 @@
       .tempo-dialog { animation: fade-in 200ms ease-out; }
       .result.visible { animation: none; }
       .result.visible > * { animation: none; opacity: 1; }
+      .app::before { animation: none; display: none; }
+      .reveal { opacity: 1; transform: none; transition: none; }
     }
 
     /* --- Error (surface card with accent border) --- */
@@ -804,7 +853,7 @@
 <body>
   <div class="app">
     <!-- Header -->
-    <header class="header">
+    <header class="header reveal">
       <a href="/" class="logo">
         <span class="logo-icon" role="img" aria-label="Music note">♪</span>
         <span class="logo-text"><span class="logo-bpm">BPM</span>finder</span>
@@ -813,13 +862,13 @@
     </header>
 
     <!-- Hero -->
-    <section class="hero">
+    <section class="hero reveal">
       <h1>Find the <span>BPM</span> of any song</h1>
       <p>Upload an audio file. Detection happens entirely in your browser — nothing leaves your machine.</p>
     </section>
 
     <!-- Drop Zone -->
-    <div class="drop-zone card" id="dropZone">
+    <div class="drop-zone card reveal" id="dropZone">
       <input type="file" class="file-input" id="fileInput" accept="audio/*">
       <div class="drop-icon" role="img" aria-label="Musical notes">♪</div>
       <div class="drop-label">Drop an audio file here</div>
@@ -863,7 +912,7 @@
     <div class="error" id="error"></div>
 
     <!-- Footer -->
-    <footer class="footer">
+    <footer class="footer reveal">
       <p>No uploads · No servers · <a href="https://essentia.upf.edu/" target="_blank" rel="noopener">Open source</a></p>
     </footer>
   </div>
@@ -965,6 +1014,21 @@
       localStorage.setItem('bpmfinder-theme', next);
       themeToggle.textContent = next === 'dark' ? '☀' : '☾';
     });
+
+    // --- Scroll-triggered reveal (Rhythmcore) ---
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.1 });
+      document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    } else {
+      document.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
+    }
 
     // --- DOM refs ---
     const dropZone = document.getElementById('dropZone');
