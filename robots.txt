@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+# BPMfinder is a single-page app — everything is at /
+# No admin, API, or private areas to block
+
+Sitemap: https://fecolinhares.github.io/BPMfinder/sitemap.xml

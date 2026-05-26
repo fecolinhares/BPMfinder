@@ -3,16 +3,47 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="index, follow">
   <title>BPMfinder — instant BPM detection</title>
   <meta name="description" content="Upload an audio file and get the BPM instantly. All processing happens in your browser — nothing is uploaded to any server.">
   <meta property="og:title" content="BPMfinder">
   <meta property="og:description" content="Instant BPM detection in your browser. No uploads, no servers, no backend.">
   <meta property="og:type" content="website">
+  <meta property="og:url" content="https://fecolinhares.github.io/BPMfinder/">
+  <link rel="canonical" href="https://fecolinhares.github.io/BPMfinder/">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎵</text></svg>">
 
-  <!-- essentia.js WASM -->
-  <script src="https://cdn.jsdelivr.net/npm/essentia.js@0.1.3/dist/essentia.js-core.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/essentia.js@0.1.3/dist/essentia-wasm.web.js"></script>
+  <!-- Preconnect to CDN for faster WASM loading -->
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+
+  <!-- Structured data: WebApplication -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "BPMfinder",
+    "url": "https://fecolinhares.github.io/BPMfinder/",
+    "description": "Instant BPM detection in your browser. Upload an audio file and get the BPM instantly — all processing happens client-side.",
+    "applicationCategory": "Multimedia",
+    "operatingSystem": "All",
+    "browserRequirements": "Requires modern browser with Web Audio API support",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "author": {
+      "@type": "Person",
+      "name": "Feco Linhares",
+      "url": "https://github.com/fecolinhares"
+    }
+  }
+  </script>
+
+  <!-- essentia.js WASM — async because detection only starts on user action -->
+  <script src="https://cdn.jsdelivr.net/npm/essentia.js@0.1.3/dist/essentia.js-core.umd.min.js" async crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/essentia.js@0.1.3/dist/essentia-wasm.web.js" async crossorigin="anonymous"></script>
 
   <style>
     /* --- Reset --- */
@@ -671,7 +702,7 @@
     <!-- Header -->
     <header class="header">
       <a href="/" class="logo">
-        <span class="logo-icon">♪</span>
+        <span class="logo-icon" role="img" aria-label="Music note">♪</span>
         <span class="logo-text"><span class="logo-bpm">BPM</span>finder</span>
       </a>
       <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">☀</button>
@@ -686,7 +717,7 @@
     <!-- Drop Zone -->
     <div class="drop-zone" id="dropZone">
       <input type="file" class="file-input" id="fileInput" accept="audio/*">
-      <div class="drop-icon">🎵</div>
+      <div class="drop-icon" role="img" aria-label="Musical notes">🎵</div>
       <div class="drop-label">Drop an audio file here</div>
       <div class="drop-hint">or click to browse · <code>MP3</code> <code>WAV</code> <code>FLAC</code> <code>OGG</code></div>
     </div>
