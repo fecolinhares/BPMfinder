@@ -1,6 +1,9 @@
 # BPMfinder
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Live Demo](https://img.shields.io/badge/Live-Demo-%23F97316?logo=githubpages&logoColor=white)](https://fecolinhares.github.io/BPMfinder/)
+
+**→ [Try BPMfinder Live](https://fecolinhares.github.io/BPMfinder/) ←**
 
 Find the BPM of any song instantly, in your browser. **No uploads, no servers, no backend.**
 
