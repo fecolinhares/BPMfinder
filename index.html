@@ -38,7 +38,7 @@
   <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 
   <!-- Structured data: WebApplication -->
   <script type="application/ld+json">
@@ -139,10 +139,10 @@
     /* --- Dark Theme (default) — Rhythmcore-inspired --- */
     [data-theme="dark"] {
       /* Rhythmcore primary: #06B6D4 (cyan), accent: #F97316 (amber) */
-      --primary: oklch(0.65 0.14 195);
-      --primary-hover: oklch(0.70 0.14 195);
-      --primary-dim: oklch(0.65 0.14 195 / 0.15);
-      --primary-glow: oklch(0.65 0.14 195 / 0.08);
+      --primary: oklch(0.55 0.14 195);
+      --primary-hover: oklch(0.60 0.14 195);
+      --primary-dim: oklch(0.55 0.14 195 / 0.15);
+      --primary-glow: oklch(0.55 0.14 195 / 0.08);
 
       --accent: oklch(0.70 0.18 51);
       --accent-hover: oklch(0.75 0.18 51);
@@ -156,8 +156,8 @@
       --bg-hover: oklch(0.18 0.01 60);
 
       --text-primary: oklch(0.92 0.005 60);
-      --text-secondary: oklch(0.65 0.008 60);
-      --text-tertiary: oklch(0.45 0.008 60);
+      --text-secondary: oklch(0.75 0.01 60);
+      --text-tertiary: oklch(0.55 0.01 60);
 
       /* Border system — subtle, matte */
       --border-subtle: oklch(0.18 0.01 60);
@@ -181,10 +181,10 @@
     /* --- Light Theme — Rhythmcore exact palette --- */
     [data-theme="light"] {
       /* Rhythmcore exact hex: primary #06B6D4, accent #F97316, bg #FFFFFF, surface #4A5568 */
-      --primary: oklch(0.62 0.16 195);       /* #06B6D4 */
-      --primary-hover: oklch(0.57 0.16 195);
-      --primary-dim: oklch(0.62 0.16 195 / 0.12);
-      --primary-glow: oklch(0.62 0.16 195 / 0.06);
+      --primary: oklch(0.53 0.16 195);       /* #06B6D4 — darkened for white text contrast */
+      --primary-hover: oklch(0.58 0.16 195);
+      --primary-dim: oklch(0.53 0.16 195 / 0.12);
+      --primary-glow: oklch(0.53 0.16 195 / 0.06);
 
       --accent: oklch(0.60 0.18 51);          /* #F97316 */
       --accent-hover: oklch(0.55 0.18 51);
@@ -1350,7 +1350,7 @@
     <div id="panelFile" class="input-panel visible">
       <!-- Drop Zone -->
       <div class="drop-zone card reveal" id="dropZone">
-        <input type="file" class="file-input" id="fileInput" accept="audio/*">
+        <input type="file" class="file-input" id="fileInput" accept="audio/*" aria-label="Choose an audio file">
         <div class="drop-icon" role="img" aria-label="Musical notes">♪</div>
         <div class="drop-label">Drop an audio file here</div>
         <div class="drop-hint">or click to browse · <code>MP3</code> <code>WAV</code> <code>FLAC</code> <code>OGG</code></div>
