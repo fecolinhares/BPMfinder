@@ -1,6 +1,6 @@
 # STATE: BPMfinder
 
-**Status:** 🟡 Phase 5 — YouTube Support in planning
+**Status:** 🟢 Phase 5 complete — YouTube Support
 **Last updated:** 2026-06-04
 
 ## Project Reference
@@ -18,37 +18,70 @@ See: `.planning/PROJECT.md` (updated 2026-06-04)
 | Phase 2 — Polish + Deploy | ✅ Complete |
 | Phase 3 — Helper Modal: Tempo Reference | ✅ Complete |
 | Phase 4 — Rhythmcore Visual Redesign | ✅ Complete |
-| Phase 5 — YouTube Link + Tab Capture | 🔲 Planned |
+| Phase 5 — YouTube Link + Tab Capture | ✅ Complete |
 
-## Milestone v3 — YouTube Support (Current)
+## Milestone v3 — YouTube Support (Complete)
 
-**Goal:** Add YouTube link support via Piped API (primary) and tab audio capture (fallback). Three input modes: audio file upload, YouTube URL, or tab capture.
+**Commit:** `81af6b4`
 
-### Key Requirements
+### Three Input Modes
 
-- **Input tabs**: Three modes — File Upload (existing) | YouTube URL | Screen Capture
-- **YouTube URL**: Extract video ID → Piped API for metadata → proxy download audio → essentia.js analysis
-- **Tab Capture**: `getDisplayMedia({ audio: true })` → MediaRecorder (10s) → AudioContext decode → essentia.js
-- **Fallback**: If Piped API fails, suggest tab capture as alternative
-- **All existing file upload flow preserved**
+**📁 File Upload (existing)**
+- Drop zone + click-to-browse → auto-analyze
+- Validates types (MP3, WAV, FLAC, OGG, etc.) and size (<200MB)
+- essentia.js WASM → BPM + confidence + tempo classification
+- 100% offline (Service Worker)
 
-### YouTube URL (Piped API) Flow
-1. User pastes YouTube link → video ID extracted
-2. `fetch(https://pipedapi.kavin.rocks/streams/{videoId})` → audio stream URLs
-3. Download via Piped proxy endpoint (CORS-enabled)
-4. `AudioContext.decodeAudioData()` → `essentia.js RhythmExtractor2013`
-5. Same BPM display + confidence + tempo classification
+**🔗 YouTube URL**
+- Paste YouTube link → extract video ID
+- Piped API (public, no key): fetch audio stream metadata
+- Audio download via Piped Proxy (CORS ✅)
+- Shows video title, channel, thumbnail during loading
+- 4 configurable instances with fallback list
+- If all instances fail: "Try Tab Capture Instead" fallback button
+- Supports: youtube.com/watch?v=, youtu.be/, shorts/, embed/
 
-### Tab Capture (getDisplayMedia) Flow
-1. User clicks "Capture from YouTube Tab"
-2. `navigator.mediaDevices.getDisplayMedia({ audio: true, video: false })`
-3. MediaRecorder captures ~10s of audio
-4. Audio blob → ArrayBuffer → `AudioContext.decodeAudioData()`
-5. `essentia.js RhythmExtractor2013` → same result display
+**🖥️ Tab Capture**
+- getDisplayMedia({ video: {w:1,h:1}, audio: true }) → drop video track
+- MediaRecorder captures 10 seconds of audio
+- Real-time progress bar + countdown (0/10s → 10/10s)
+- Stereo → mono conversion
+- Browser support detection (disables tab if unsupported)
+- Handles: permission denied, no audio track, capture too short
 
-## Próximos Passos
+### Shared Pipeline
+- `runEssentia()` function extracted from `detectBPM()`
+- All 3 modes feed into the same essentia.js RhythmExtractor2013
+- Same BPM display, animated counter, confidence color-coding
+- Source indicator: "from file" / "from YouTube" / "from tab capture"
 
-1. ✅ Milestone v3 criada (PROJECT.md, REQUIREMENTS.md, ROADMAP.md, STATE.md)
-2. ⏳ `/gsd-plan-phase 5` — detalhar plano de implementação
-3. ⏳ Executar fase 5
-4. ⏳ Verificar + deploy
+### Service Worker
+- Piped API/proxy URLs excluded from cache (network only)
+- File upload still works offline
+
+### UI
+- Tab bar with 3 modes (File | YouTube | Capture)
+- Rhythmcore design tokens reused throughout
+- Mobile: tabs show icons only, inputs stack vertically
+- Dark/light theme: all new elements render correctly in both
+- Keyboard: Tab navigation, Enter to analyze/capture
+
+## Features Delivered (v1 + v2 + v3)
+
+### YouTube URL (Piped API)
+- URL parsing from multiple YouTube formats
+- Public API (no key required)
+- Configurable instance list with fallback
+- Proxy download with CORS support
+- Video metadata display (title, channel, thumbnail)
+- Graceful error + fallback to tab capture
+
+### Tab Capture (getDisplayMedia)
+- Browser-native screen/tab audio capture
+- 10-second recording with visual progress
+- Automatic mono downmix
+- Support detection + graceful unsupported message
+
+## License
+
+MIT © Feco Linhares — use freely, credit required.

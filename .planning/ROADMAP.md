@@ -114,9 +114,7 @@ Reset universal `margin: 0` anulava `margin: auto` nativo do `<dialog>`. UA `ins
 
 ---
 
-## Milestone v3 — YouTube Support (Current)
-
-## Phase 5 — YouTube Link + Tab Capture
+## Phase 5 — YouTube Link + Tab Capture ✅
 
 **Goal:** Add YouTube link support and tab audio capture alongside existing file upload. Three input modes: audio file, YouTube URL, tab capture.
 
