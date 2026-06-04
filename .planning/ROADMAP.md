@@ -139,5 +139,30 @@ Reset universal `margin: 0` anulava `margin: auto` nativo do `<dialog>`. UA `ins
 - [ ] Same visual result card for all 3 modes
 
 ### Service Worker & Offline
-- [ ] SW updated to NOT cache Piped/YouTube responses
-- [ ] Features gracefully degrade when offline (file upload still works)
+- [x] SW updated to NOT cache Piped/YouTube responses
+- [x] Features gracefully degrade when offline (file upload still works)
+
+---
+
+## Phase 6 — Microphone Capture 🎤
+
+**Goal:** Add microphone audio capture as a second option in the Capture tab. User can choose between Tab Capture (existing) and Mic Capture (new).
+
+**Requirements:** See `.planning/tasks/phase-06/REQUIREMENTS.md`
+
+### Microphone Capture
+- [ ] `getUserMedia({ audio: true })` integration alongside existing tab capture
+- [ ] UI: two buttons in capture panel — "Capture from Microphone" + "Capture from Tab"
+- [ ] MediaRecorder pipeline (same 10s pattern as tab capture)
+- [ ] Permission handling: denied → clear error message
+- [ ] Privacy indicator: visual "mic is recording" state
+
+### Shared pipeline
+- [ ] Mic blob → AudioBuffer → runEssentia() → same displayResult()
+- [ ] Source indicator shows "from microphone"
+- [ ] Progress bar + countdown (same as tab capture)
+
+### Edge cases
+- [ ] No mic connected → clear error
+- [ ] Mic permission blocked → guidance to enable in browser settings
+- [ ] Silent recording → warn if audio level is too low
