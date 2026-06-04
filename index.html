@@ -1297,14 +1297,21 @@
         <span class="logo-icon" role="img" aria-label="Music note">♪</span>
         <span class="logo-text"><span class="logo-bpm">BPM</span>finder</span>
       </a>
-      <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">☀</button>
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+        <svg class="theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
+          <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+        </svg>
+        <svg class="theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18" style="display:none">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </button>
     </header>
 
     <main>
     <!-- Hero -->
     <section class="hero reveal">
       <h1>Find the <span>BPM</span> of any song</h1>
-      <p>Upload an audio file. Detection happens entirely in your browser — nothing leaves your machine.</p>
+      <p>Upload an audio file, paste a YouTube link, or capture live audio from your microphone or browser tab. All processing happens in your browser — nothing leaves your machine.</p>
     </section>
 
     <!-- Trust badges (SEO) -->
@@ -1472,7 +1479,7 @@
 
     <!-- Footer -->
     <footer class="footer reveal">
-      <p>No uploads · No servers · <a href="https://github.com/fecolinhares/BPMfinder" target="_blank" rel="noopener">Open source</a></p>
+      <p>No uploads · No servers · <a href="https://github.com/fecolinhares/BPMfinder" target="_blank" rel="noopener" aria-label="BPMfinder on GitHub (open source)">GitHub</a></p>
       <p class="footer-tag">Free online BPM analyzer for DJs, producers, and musicians</p>
     </footer>
   </div>
@@ -1565,15 +1572,28 @@
     // Restore theme from localStorage
     const savedTheme = localStorage.getItem('bpmfinder-theme') || 'dark';
     html.setAttribute('data-theme', savedTheme);
-    themeToggle.textContent = savedTheme === 'dark' ? '☀' : '☾';
+    updateThemeIcons(savedTheme);
 
     themeToggle.addEventListener('click', () => {
       const current = html.getAttribute('data-theme');
       const next = current === 'dark' ? 'light' : 'dark';
       html.setAttribute('data-theme', next);
       localStorage.setItem('bpmfinder-theme', next);
-      themeToggle.textContent = next === 'dark' ? '☀' : '☾';
+      updateThemeIcons(next);
     });
+
+    function updateThemeIcons(theme) {
+      const sun = document.querySelector('.theme-icon-sun');
+      const moon = document.querySelector('.theme-icon-moon');
+      if (!sun || !moon) return;
+      if (theme === 'dark') {
+        sun.style.display = 'inline';
+        moon.style.display = 'none';
+      } else {
+        sun.style.display = 'none';
+        moon.style.display = 'inline';
+      }
+    }
 
     // --- Scroll-triggered reveal (Rhythmcore) ---
     if ('IntersectionObserver' in window) {
