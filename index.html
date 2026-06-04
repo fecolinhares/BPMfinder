@@ -742,6 +742,12 @@
       font-size: var(--text-sm);
       color: var(--text-secondary);
     }
+    .capture-req {
+      font-size: var(--text-xs);
+      color: var(--text-tertiary);
+      margin-bottom: var(--space-3);
+      text-align: center;
+    }
     .capture-btn {
       display: flex;
       align-items: center;
@@ -1341,6 +1347,7 @@
     <div id="panelCapture" class="input-panel card card-padded" role="tabpanel" hidden>
       <div class="capture-ready" id="captureReady">
         <p class="capture-desc">Select the tab with your audio source (YouTube, Spotify, etc.). Make sure to check <strong>"Share audio"</strong> in the dialog.</p>
+        <p class="capture-req">Requires HTTPS or localhost · Chrome 104+, Firefox 91+, Safari 17+</p>
         <button id="captureStartBtn" class="capture-btn">
           <span>🖥️ Select Tab & Capture Audio</span>
         </button>
@@ -1910,13 +1917,7 @@
       return !!navigator.mediaDevices?.getDisplayMedia;
     }
 
-    // Disable capture tab if unsupported
-    if (!isCaptureSupported()) {
-      document.querySelector('.input-tab[data-mode="capture"]').title = 'Not supported in this browser. Try Chrome, Firefox, or Safari.';
-      document.querySelector('.input-tab[data-mode="capture"]').style.opacity = '0.4';
-      captureStartBtn.disabled = true;
-      captureStartBtn.title = 'Tab capture is not supported in this browser.';
-    }
+    // Note: no pre-disabling — let the user try and get contextual error feedback
 
     function stereoToMono(buffer) {
       const left = buffer.getChannelData(0);
@@ -1996,6 +1997,8 @@
           showCaptureError('Capture cancelled. Click "Select Tab & Capture Audio" to try again.');
         } else if (err.name === 'NotFoundError') {
           showCaptureError('No audio source found. Make sure the tab is playing audio.');
+        } else if (err instanceof TypeError && err.message.includes('getDisplayMedia')) {
+          showCaptureError('This browser doesn\'t support tab capture. Try Chrome, Firefox, or Safari with HTTPS.');
         } else {
           showCaptureError(err.message || 'Failed to capture audio.');
         }
