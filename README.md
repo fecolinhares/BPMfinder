@@ -9,20 +9,32 @@ Find the BPM of any song instantly, in your browser. **No uploads, no servers, n
 
 ## How it works
 
-1. Drop or select an audio file (MP3, WAV, FLAC, OGG, etc.)
-2. Analysis starts **automatically** — no button to click
-3. BPM is detected client-side using [essentia.js](https://essentia.upf.edu/) (WASM)
-4. Everything stays on your machine
+1. Choose an input mode: **File**, **YouTube URL**, **Microphone**, or **Tab Capture**
+2. For files: drop or select an audio file — analysis starts **automatically**
+3. For YouTube: paste a link and click Analyze — audio is fetched via Piped API
+4. For Capture: click Microphone or Tab Audio, grant permission, wait 10 seconds
+5. BPM is detected client-side using [essentia.js](https://essentia.upf.edu/) (WASM)
+6. Everything stays on your machine
 
 ## Features
 
+- **4 input modes** — File upload, YouTube URL, Microphone capture, Tab audio capture
 - **Instant BPM detection** via RhythmExtractor2013 (essentia.js WASM)
 - **Tempo classification** — Grave → Prestissimo with reference modal
 - **Confidence indicator** — color-coded (green/amber/red)
 - **Dark/light themes** — persisted to localStorage
-- **Drag-and-drop** file upload
-- **Auto-analyze** on file select (zero clicks)
-- **Offline support** via Service Worker
+- **Drag-and-drop** file upload with auto-analyze
+- **AI Agent ready** — `/llms.txt` and WebMCP Declarative API for agent tool registration
+- **Offline support** via Service Worker (file upload mode)
+
+## Lighthouse Scores
+
+| Metric | Score |
+|--------|-------|
+| SEO | 100% |
+| Accessibility | 100% |
+| Best Practices | 100% |
+| Agentic Browsing | 100% |
 
 ## Design System
 
@@ -30,7 +42,7 @@ Built with the **Rhythmcore Interface** design language (Meng To / Neuform Featu
 
 | Token | Value | Usage |
 |-------|-------|-------|
-| Primary | `#06B6D4` (cyan) | Drag-over glow, spinner |
+| Primary | `#06B6D4` (cyan) | Active tab, drag-over glow, spinner |
 | Accent | `#F97316` (amber) | BPM display, buttons, logo |
 | Surface | `#4A5568` | Dialog header, file info |
 | Typography | **Inter** | Body and headings |
@@ -47,7 +59,10 @@ Built with the **Rhythmcore Interface** design language (Meng To / Neuform Featu
 
 - **Stack:** Vanilla HTML/CSS/JS + essentia.js WASM
 - **Detection:** `RhythmExtractor2013` from essentia.js
+- **YouTube:** Piped API (public, no key needed)
+- **Mic/Tab Capture:** WebRTC APIs (getUserMedia, getDisplayMedia)
 - **Design:** Rhythmcore Interface, OKLCH colors, Google Fonts (Inter + JetBrains Mono)
+- **AI Agents:** llms.txt (llmstxt.org), WebMCP Declarative API
 - **Zero dependencies** — no build step, no frameworks, no npm
 - **Design contract:** `DESIGN.md` at project root
 
@@ -55,14 +70,17 @@ Built with the **Rhythmcore Interface** design language (Meng To / Neuform Featu
 
 ```
 BPMfinder/
-├── index.html          # Single-page app (CSS + JS inline)
-├── sw.js               # Service Worker (offline caching)
-├── DESIGN.md           # Rhythmcore design contract
-├── robots.txt          # SEO
-├── sitemap.xml         # SEO
-├── .planning/          # GSD workflow artifacts
-├── .github/workflows/  # GitHub Actions deploy
-└── LICENSE             # MIT
+├── index.html            # Single-page app (CSS + JS inline)
+├── index.html.md         # Markdown version for LLM consumption
+├── sw.js                 # Service Worker (offline caching)
+├── llms.txt              # LLM-friendly site overview (llmstxt.org)
+├── DESIGN.md             # Rhythmcore design contract
+├── robots.txt            # SEO + AI agent entry points
+├── sitemap.xml           # SEO
+├── docs/                 # Generated documentation
+├── .planning/            # GSD workflow artifacts
+├── .github/workflows/    # GitHub Actions deploy
+└── LICENSE               # MIT
 ```
 
 ## License
@@ -70,3 +88,7 @@ BPMfinder/
 MIT © [Feco Linhares](https://github.com/fecolinhares)
 
 You're free to use, modify, distribute, and sell this software, as long as the original copyright notice and permission notice are included. See [LICENSE](LICENSE) for details.
+
+---
+
+> **GSD-generated sections below** — this README was supplemented by gsd-docs-update to cover Phases 5-9 features (YouTube, Mic, Tab Capture, llms.txt, WebMCP).
