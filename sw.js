@@ -20,6 +20,12 @@ self.addEventListener('fetch', (event) => {
   // Only cache GET requests
   if (request.method !== 'GET') return;
   
+  // For API/proxy requests, network only — never cache
+  if (request.url.includes('pipedapi') || request.url.includes('pipedproxy')) {
+    event.respondWith(fetch(request).catch(() => new Response('{"error":"offline"}', { status: 503, headers: {'Content-Type':'application/json'} })));
+    return;
+  }
+
   // For CDN resources, try network first, fall back to cache
   if (request.url.includes('cdn.jsdelivr.net')) {
     event.respondWith(

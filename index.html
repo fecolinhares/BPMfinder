@@ -171,6 +171,7 @@
       --success: oklch(0.65 0.14 150);
       --error: oklch(0.60 0.18 30);
       --warning: oklch(0.72 0.12 85);
+      --warning-dim: oklch(0.72 0.12 85 / 0.15);
     }
 
     /* --- Light Theme — Rhythmcore exact palette --- */
@@ -209,6 +210,7 @@
       --success: oklch(0.55 0.15 150);
       --error: oklch(0.55 0.20 30);
       --warning: oklch(0.65 0.14 85);
+      --warning-dim: oklch(0.65 0.14 85 / 0.15);
     }
 
     /* --- Base --- */
@@ -525,6 +527,281 @@
     .analyze-btn:focus-visible {
       outline: 2px solid var(--accent);
       outline-offset: 2px;
+    }
+
+    /* --- YouTube Button (reuses analyze-btn styles) --- */
+    .youtube-analyze-btn {
+      width: auto;
+      min-width: 100px;
+      padding: var(--space-2) var(--space-4);
+      font-family: var(--font-sans);
+      font-size: var(--text-sm);
+      font-weight: 600;
+      border: none;
+      border-radius: var(--radius-control);
+      background: var(--accent);
+      color: var(--bg-base);
+      cursor: pointer;
+      transition: background var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .youtube-analyze-btn:hover:not(:disabled) {
+      background: var(--accent-hover);
+      transform: translateY(-2px);
+    }
+    .youtube-analyze-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    /* --- Input Mode Tabs --- */
+    .input-tabs {
+      display: flex;
+      gap: 0;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-control);
+      overflow: hidden;
+      margin-bottom: var(--space-4);
+    }
+    .input-tab {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+      padding: var(--space-3) var(--space-2);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      color: var(--text-tertiary);
+      font-family: var(--font-sans);
+      font-size: var(--text-sm);
+      font-weight: 500;
+      transition: background var(--transition-fast), color var(--transition-fast);
+      white-space: nowrap;
+    }
+    .input-tab:hover { background: var(--bg-hover); color: var(--text-secondary); }
+    .input-tab.active {
+      background: var(--primary-dim);
+      color: var(--primary);
+      font-weight: 600;
+    }
+    .input-tab:focus-visible {
+      outline: 2px solid var(--primary);
+      outline-offset: -2px;
+    }
+    .input-tab-icon { font-size: 1.1rem; }
+
+    /* --- Input Panels (YouTube + Capture) --- */
+    .input-panel { display: none; }
+    .input-panel.visible { display: block; }
+
+    /* --- YouTube URL Panel --- */
+    .youtube-input-row {
+      display: flex;
+      gap: var(--space-3);
+    }
+    .youtube-input {
+      flex: 1;
+      padding: var(--space-2) var(--space-3);
+      background: var(--bg-base);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-control);
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+      font-size: var(--text-sm);
+      transition: border-color var(--transition-fast);
+    }
+    .youtube-input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px var(--primary-dim);
+    }
+    .youtube-input::placeholder { color: var(--text-tertiary); }
+    .youtube-hint {
+      margin-top: var(--space-2);
+      font-size: var(--text-xs);
+      color: var(--text-tertiary);
+    }
+    .youtube-hint code {
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      background: var(--bg-elevated);
+      padding: 1px 6px;
+      border-radius: 4px;
+    }
+    .youtube-loading {
+      margin-top: var(--space-3);
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-3);
+      background: var(--bg-surface);
+      border-radius: var(--radius-card);
+    }
+    .youtube-loading.hidden { display: none; }
+    .youtube-thumb img {
+      width: 80px;
+      height: 45px;
+      border-radius: 4px;
+      object-fit: cover;
+      display: block;
+    }
+    .youtube-meta {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+    .youtube-title {
+      font-family: var(--font-sans);
+      font-weight: 500;
+      font-size: var(--text-sm);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .youtube-channel {
+      font-size: var(--text-xs);
+      color: var(--text-tertiary);
+    }
+    .youtube-status {
+      font-size: var(--text-xs);
+      color: var(--text-secondary);
+    }
+    .youtube-error {
+      margin-top: var(--space-2);
+      font-size: var(--text-sm);
+      color: var(--error);
+    }
+    .youtube-error.hidden { display: none; }
+    .youtube-fallback {
+      margin-top: var(--space-3);
+      padding: var(--space-3);
+      background: var(--warning-dim);
+      border: 1px solid var(--warning);
+      border-radius: var(--radius-card);
+      text-align: center;
+      font-size: var(--text-sm);
+    }
+    .youtube-fallback.hidden { display: none; }
+    .youtube-fallback .btn-accent {
+      margin-top: var(--space-2);
+      padding: var(--space-2) var(--space-4);
+      border: none;
+      border-radius: var(--radius-control);
+      background: var(--accent);
+      color: var(--bg-base);
+      font-family: var(--font-sans);
+      font-size: var(--text-sm);
+      font-weight: 600;
+      cursor: pointer;
+      transition: background var(--transition-fast), transform var(--transition-fast);
+    }
+    .youtube-fallback .btn-accent:hover {
+      background: var(--accent-hover);
+      transform: translateY(-2px);
+    }
+
+    /* --- Tab Capture Panel --- */
+    .capture-ready {
+      text-align: center;
+    }
+    .capture-ready.hidden { display: none; }
+    .capture-desc {
+      margin-bottom: var(--space-3);
+      font-size: var(--text-sm);
+      color: var(--text-secondary);
+    }
+    .capture-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+      width: 100%;
+      padding: var(--space-3) var(--space-6);
+      font-family: var(--font-sans);
+      font-size: var(--text-base);
+      font-weight: 600;
+      border: none;
+      border-radius: var(--radius-control);
+      background: var(--primary);
+      color: var(--bg-base);
+      cursor: pointer;
+      transition: background var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast);
+    }
+    .capture-btn:hover:not(:disabled) {
+      background: var(--primary-hover);
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+    .capture-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+    .capture-progress {
+      text-align: center;
+      padding: var(--space-6);
+    }
+    .capture-progress.hidden { display: none; }
+    .capture-meter {
+      width: 100%;
+      height: 6px;
+      background: var(--bg-surface);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: var(--space-2);
+    }
+    .capture-meter-fill {
+      height: 100%;
+      background: var(--primary);
+      width: 0%;
+      transition: width 100ms linear;
+      border-radius: 3px;
+    }
+    .capture-countdown {
+      font-family: var(--font-mono);
+      font-size: var(--text-sm);
+      color: var(--text-secondary);
+    }
+    .capture-error {
+      text-align: center;
+      padding: var(--space-4);
+    }
+    .capture-error.hidden { display: none; }
+    .capture-error-msg {
+      color: var(--error);
+      font-size: var(--text-sm);
+      margin-bottom: var(--space-2);
+    }
+    .capture-retry-btn {
+      padding: var(--space-2) var(--space-4);
+      border: none;
+      border-radius: var(--radius-control);
+      background: var(--accent);
+      color: var(--bg-base);
+      font-family: var(--font-sans);
+      font-size: var(--text-sm);
+      font-weight: 600;
+      cursor: pointer;
+      transition: background var(--transition-fast), transform var(--transition-fast);
+    }
+    .capture-retry-btn:hover {
+      background: var(--accent-hover);
+      transform: translateY(-2px);
+    }
+
+    /* --- Result Source Indicator --- */
+    .result-source {
+      display: block;
+      font-family: var(--font-mono);
+      font-size: var(--text-xs);
+      color: var(--text-tertiary);
+      margin-top: var(--space-1);
     }
 
     /* --- Loading State (Rhythmcore compact) --- */
@@ -904,6 +1181,12 @@
       .result { padding: var(--space-4); }
       .result-bpm { font-size: 3rem; }
       :root { --text-display: 3rem; }
+      .input-tab { padding: var(--space-2) var(--space-1); font-size: var(--text-xs); }
+      .input-tab-icon { font-size: 0.9rem; }
+      .input-tab-label { display: none; }
+      .youtube-input-row { flex-direction: column; }
+      .youtube-analyze-btn { width: 100%; }
+      .youtube-loading { flex-wrap: wrap; }
     }
 
     /* --- Reduced Motion --- */
@@ -941,25 +1224,96 @@
       <span class="badge">🆓 Free Forever</span>
     </div>
 
-    <!-- Drop Zone -->
-    <div class="drop-zone card reveal" id="dropZone">
-      <input type="file" class="file-input" id="fileInput" accept="audio/*">
-      <div class="drop-icon" role="img" aria-label="Musical notes">♪</div>
-      <div class="drop-label">Drop an audio file here</div>
-      <div class="drop-hint">or click to browse · <code>MP3</code> <code>WAV</code> <code>FLAC</code> <code>OGG</code></div>
+    <!-- Input Mode Tabs -->
+    <div class="input-tabs" id="inputTabs" role="tablist" aria-label="Input mode">
+      <button class="input-tab active" role="tab" aria-selected="true" data-mode="file" id="tabFile" aria-controls="panelFile">
+        <span class="input-tab-icon">📁</span>
+        <span class="input-tab-label">File</span>
+      </button>
+      <button class="input-tab" role="tab" aria-selected="false" data-mode="youtube" id="tabYoutube" aria-controls="panelYoutube">
+        <span class="input-tab-icon">🔗</span>
+        <span class="input-tab-label">YouTube</span>
+      </button>
+      <button class="input-tab" role="tab" aria-selected="false" data-mode="capture" id="tabCapture" aria-controls="panelCapture">
+        <span class="input-tab-icon">🖥️</span>
+        <span class="input-tab-label">Capture</span>
+      </button>
     </div>
 
-    <!-- File Info + Analyze -->
-    <div id="uploadPanel" class="upload-panel card card-padded">
-      <div class="file-info" id="fileInfo">
-        <span class="file-info-icon">🎵</span>
-        <span class="file-info-name" id="fileName">—</span>
-        <span class="file-info-size" id="fileSize">—</span>
-        <button class="file-info-clear" id="clearFile" aria-label="Remove file">✕</button>
+    <!-- File Panel -->
+    <div id="panelFile" class="input-panel visible">
+      <!-- Drop Zone -->
+      <div class="drop-zone card reveal" id="dropZone">
+        <input type="file" class="file-input" id="fileInput" accept="audio/*">
+        <div class="drop-icon" role="img" aria-label="Musical notes">♪</div>
+        <div class="drop-label">Drop an audio file here</div>
+        <div class="drop-hint">or click to browse · <code>MP3</code> <code>WAV</code> <code>FLAC</code> <code>OGG</code></div>
       </div>
-      <button class="analyze-btn" id="analyzeBtn">
-        <span>Analyze BPM</span>
-      </button>
+
+      <!-- File Info + Analyze -->
+      <div id="uploadPanel" class="upload-panel card card-padded">
+        <div class="file-info" id="fileInfo">
+          <span class="file-info-icon">🎵</span>
+          <span class="file-info-name" id="fileName">—</span>
+          <span class="file-info-size" id="fileSize">—</span>
+          <button class="file-info-clear" id="clearFile" aria-label="Remove file">✕</button>
+        </div>
+        <button class="analyze-btn" id="analyzeBtn">
+          <span>Analyze BPM</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- YouTube URL Panel -->
+    <div id="panelYoutube" class="input-panel card card-padded" role="tabpanel" hidden>
+      <div class="youtube-input-row">
+        <input type="url" id="youtubeUrlInput" class="youtube-input"
+               placeholder="Paste YouTube link…"
+               aria-label="YouTube video URL">
+        <button id="youtubeAnalyzeBtn" class="youtube-analyze-btn">
+          <span>Analyze</span>
+        </button>
+      </div>
+      <div class="youtube-hint">
+        Supports <code>youtube.com/watch?v=</code>, <code>youtu.be/</code>
+      </div>
+      <div class="youtube-error hidden" id="youtubeError"></div>
+      <div class="youtube-loading hidden" id="youtubeLoading">
+        <div class="youtube-thumb" id="youtubeThumb">
+          <img id="youtubeThumbImg" alt="" crossorigin="anonymous">
+        </div>
+        <div class="youtube-meta">
+          <span class="youtube-title" id="youtubeTitle">—</span>
+          <span class="youtube-channel" id="youtubeChannel">—</span>
+        </div>
+        <div class="spinner"></div>
+      </div>
+      <span class="youtube-status" id="youtubeStatus">Fetching audio stream…</span>
+      <div class="youtube-fallback hidden" id="youtubeFallback">
+        <p>⚠️ YouTube API temporarily unavailable.</p>
+        <button id="fallbackCaptureBtn" class="btn-accent">Try Tab Capture Instead</button>
+      </div>
+    </div>
+
+    <!-- Tab Capture Panel -->
+    <div id="panelCapture" class="input-panel card card-padded" role="tabpanel" hidden>
+      <div class="capture-ready" id="captureReady">
+        <p class="capture-desc">Select the tab with your audio source (YouTube, Spotify, etc.). Make sure to check <strong>"Share audio"</strong> in the dialog.</p>
+        <button id="captureStartBtn" class="capture-btn">
+          <span>🖥️ Select Tab & Capture Audio</span>
+        </button>
+      </div>
+      <div class="capture-progress hidden" id="captureProgress">
+        <div class="capture-meter">
+          <div class="capture-meter-fill" id="captureMeterFill"></div>
+        </div>
+        <span class="capture-countdown" id="captureCountdown">Capturing… 0/10s</span>
+        <div class="spinner"></div>
+      </div>
+      <div class="capture-error hidden" id="captureError">
+        <p class="capture-error-msg" id="captureErrorMsg">—</p>
+        <button id="captureRetryBtn" class="capture-retry-btn">Try Again</button>
+      </div>
     </div>
 
     <!-- Loading -->
@@ -977,6 +1331,7 @@
         <button class="tempo-help-btn" id="tempoHelpBtn" aria-label="Learn about tempo classifications">ⓘ</button>
       </div>
       <div class="bpm-confidence" id="bpmConfidence"></div>
+      <span class="result-source" id="resultSource"></span>
       <div class="actions">
         <button id="analyzeAgain">Analyze another file</button>
       </div>
@@ -1126,8 +1481,39 @@
     const tempoDialog = document.getElementById('tempoDialog');
     const tempoDialogClose = document.getElementById('tempoDialogClose');
 
+    // New DOM refs — YouTube + Tab Capture
+    const youtubePanel = document.getElementById('panelYoutube');
+    const capturePanel = document.getElementById('panelCapture');
+    const youtubeUrlInput = document.getElementById('youtubeUrlInput');
+    const youtubeAnalyzeBtn = document.getElementById('youtubeAnalyzeBtn');
+    const youtubeError = document.getElementById('youtubeError');
+    const youtubeLoading = document.getElementById('youtubeLoading');
+    const youtubeThumbImg = document.getElementById('youtubeThumbImg');
+    const youtubeTitle = document.getElementById('youtubeTitle');
+    const youtubeChannel = document.getElementById('youtubeChannel');
+    const youtubeStatus = document.getElementById('youtubeStatus');
+    const youtubeFallback = document.getElementById('youtubeFallback');
+    const fallbackCaptureBtn = document.getElementById('fallbackCaptureBtn');
+    const captureReady = document.getElementById('captureReady');
+    const captureStartBtn = document.getElementById('captureStartBtn');
+    const captureProgress = document.getElementById('captureProgress');
+    const captureMeterFill = document.getElementById('captureMeterFill');
+    const captureCountdown = document.getElementById('captureCountdown');
+    const captureError = document.getElementById('captureError');
+    const captureErrorMsg = document.getElementById('captureErrorMsg');
+    const captureRetryBtn = document.getElementById('captureRetryBtn');
+    const resultSource = document.getElementById('resultSource');
+
     let currentFile = null;
     let audioContext = null;
+
+    // --- Piped API Configuration ---
+    const PIPED_INSTANCES = [
+      'https://pipedapi.kavin.rocks',
+      'https://pipedapi.tiekoetter.com',
+      'https://pipedapi.private.coffee',
+      'https://pipedapi.r4fo.com',
+    ];
 
     // --- Helpers ---
     function formatSize(bytes) {
@@ -1210,15 +1596,6 @@
       resetUI();
     });
 
-    // Analyze again
-    analyzeAgain.addEventListener('click', () => {
-      currentFile = null;
-      fileInput.value = '';
-      dropZone.classList.remove('hidden');
-      uploadPanel.classList.remove('visible');
-      resetUI();
-    });
-
     // --- Tempo Dialog ---
     buildTempoTable();
 
@@ -1259,42 +1636,34 @@
     });
 
     async function detectBPM(file) {
-      // Decode audio
       const arrayBuffer = await file.arrayBuffer();
       if (!audioContext) audioContext = new AudioContext();
       const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
-
-      // Take first channel
       const channelData = audioBuffer.getChannelData(0);
+      return runEssentia(channelData);
+    }
 
-      // Initialize essentia.js (MODULARIZE pattern — EssentiaWASM is a factory function)
+    // --- Shared essentia.js pipeline ---
+    async function runEssentia(channelData) {
       const EssentiaConstructor = globalThis.Essentia;
       const wasmFactory = globalThis.EssentiaWASM;
       if (!EssentiaConstructor || !wasmFactory) {
         throw new Error('essentia.js failed to load. Check your internet connection.');
       }
 
-      // Call the WASM factory — returns a Promise that resolves to the initialized Module
       const wasmModule = await wasmFactory();
       const essentia = new EssentiaConstructor(wasmModule);
 
       try {
-        // Convert Float32Array to essentia vector
         const audioVector = essentia.arrayToVector(channelData);
-
-        // Run RhythmExtractor2013 for BPM detection
         const rhythm = essentia.RhythmExtractor2013(audioVector);
-        // Returns: { bpm, confidence, estimates, bpm_intervals, ... }
-
         const detectedBPM = Math.round(rhythm.bpm);
         const confidence = rhythm.confidence;
-
         essentia.delete();
 
         if (!detectedBPM || detectedBPM < 20 || detectedBPM > 300) {
-          throw new Error(`Unusual BPM value (${detectedBPM}). The file might be ambient or speech.`);
+          throw new Error(`Unusual BPM value (${detectedBPM}). The source might be ambient or speech.`);
         }
-
         return { bpm: detectedBPM, confidence };
       } catch (err) {
         essentia.delete();
@@ -1313,7 +1682,6 @@
       const target = bpm;
       function animate(time) {
         const progress = Math.min((time - start) / duration, 1);
-        // Ease-out cubic
         const eased = 1 - Math.pow(1 - progress, 3);
         bpmValue.textContent = Math.round(eased * target);
         if (progress < 1) requestAnimationFrame(animate);
@@ -1330,7 +1698,7 @@
       const rawConfidence = typeof confidence === 'number' ? confidence : 0;
       const confidencePct = Math.min(rawConfidence >= 1 ? 100 : Math.round(rawConfidence * 100), 100);
 
-      // Color-code by confidence level (restrained — text color only)
+      // Color-code by confidence level
       bpmConfidence.className = 'bpm-confidence';
       if (confidencePct >= 70) {
         bpmConfidence.classList.add('confidence-good');
@@ -1339,9 +1707,301 @@
       } else {
         bpmConfidence.classList.add('confidence-bad');
       }
-
       bpmConfidence.textContent = `confidence ${confidencePct}%`;
+
+      // Source indicator
+      const modeLabels = { file: 'from file', youtube: 'from YouTube', capture: 'from tab capture' };
+      resultSource.textContent = modeLabels[currentMode] || '';
     }
+
+    // --- Input Mode Tabs ---
+    const MODES = {
+      file: { panel: document.getElementById('panelFile') },
+      youtube: { panel: youtubePanel },
+      capture: { panel: capturePanel }
+    };
+    let currentMode = 'file';
+
+    function switchMode(mode) {
+      if (mode === currentMode) return;
+      // Reset current mode
+      if (currentMode === 'file') { resetFileMode(); }
+      if (currentMode === 'youtube') { resetYoutubeMode(); }
+      if (currentMode === 'capture') { resetCaptureMode(); }
+      // Update tabs
+      document.querySelectorAll('.input-tab').forEach(tab => {
+        tab.classList.toggle('active', tab.dataset.mode === mode);
+        tab.setAttribute('aria-selected', tab.dataset.mode === mode);
+      });
+      // Update panels
+      Object.keys(MODES).forEach(key => {
+        const panel = MODES[key].panel;
+        panel.classList.toggle('visible', key === mode);
+        panel.hidden = key !== mode;
+      });
+      currentMode = mode;
+    }
+
+    document.querySelectorAll('.input-tab').forEach(tab => {
+      tab.addEventListener('click', () => switchMode(tab.dataset.mode));
+    });
+
+    // --- YouTube URL ---
+    function extractYoutubeId(url) {
+      const patterns = [
+        /(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/,
+        /youtube\.com\/embed\/([a-zA-Z0-9_-]{11})/,
+        /youtube\.com\/shorts\/([a-zA-Z0-9_-]{11})/,
+        /m\.youtube\.com\/watch\?v=([a-zA-Z0-9_-]{11})/
+      ];
+      for (const p of patterns) {
+        const m = url.match(p);
+        if (m) return m[1];
+      }
+      return null;
+    }
+
+    async function fetchWithTimeout(url, timeoutMs = 15000) {
+      const controller = new AbortController();
+      const id = setTimeout(() => controller.abort(), timeoutMs);
+      try {
+        const res = await fetch(url, { signal: controller.signal });
+        return res;
+      } finally {
+        clearTimeout(id);
+      }
+    }
+
+    async function fetchYoutubeAudio(videoId) {
+      for (const instance of PIPED_INSTANCES) {
+        try {
+          const streamRes = await fetchWithTimeout(`${instance}/streams/${videoId}`);
+          if (!streamRes.ok) continue;
+
+          const data = await streamRes.json();
+          const audioStreams = data.audioStreams || [];
+          if (audioStreams.length === 0) continue;
+
+          const best = audioStreams.reduce((a, b) => (a.bitrate || 0) > (b.bitrate || 0) ? a : b);
+
+          const audioRes = await fetchWithTimeout(best.url);
+          if (!audioRes.ok) continue;
+
+          const arrayBuffer = await audioRes.arrayBuffer();
+          return {
+            arrayBuffer,
+            title: data.title || 'Unknown',
+            thumbnailUrl: data.thumbnailUrl || null,
+            uploader: data.uploader || 'Unknown'
+          };
+        } catch (err) {
+          if (err.name === 'AbortError') continue;
+          continue;
+        }
+      }
+      throw new Error('All Piped API instances are currently unavailable. Try the Tab Capture mode instead.');
+    }
+
+    youtubeAnalyzeBtn.addEventListener('click', async () => {
+      const url = youtubeUrlInput.value.trim();
+      if (!url) { showYoutubeError('Please paste a YouTube link.'); return; }
+
+      const videoId = extractYoutubeId(url);
+      if (!videoId) { showYoutubeError('Invalid YouTube URL. Try a different link.'); return; }
+
+      hideYoutubeError();
+      youtubeUrlInput.disabled = true;
+      youtubeAnalyzeBtn.disabled = true;
+      youtubeAnalyzeBtn.querySelector('span').textContent = 'Fetching…';
+      youtubeLoading.classList.remove('hidden');
+      youtubeStatus.textContent = 'Fetching audio stream…';
+      youtubeFallback.classList.add('hidden');
+
+      try {
+        const { arrayBuffer, title, thumbnailUrl, uploader } = await fetchYoutubeAudio(videoId);
+
+        youtubeTitle.textContent = title;
+        youtubeChannel.textContent = uploader;
+        if (thumbnailUrl) youtubeThumbImg.src = thumbnailUrl;
+
+        youtubeStatus.textContent = 'Downloaded! Analyzing BPM…';
+
+        if (!audioContext) audioContext = new AudioContext();
+        const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+        const channelData = audioBuffer.getChannelData(0);
+        const bpm = await runEssentia(channelData);
+        displayResult(bpm);
+
+        resetYoutubeMode();
+      } catch (err) {
+        youtubeLoading.classList.add('hidden');
+        showYoutubeError(err.message);
+        youtubeFallback.classList.remove('hidden');
+        youtubeUrlInput.disabled = false;
+        youtubeAnalyzeBtn.disabled = false;
+        youtubeAnalyzeBtn.querySelector('span').textContent = 'Analyze';
+      }
+    });
+
+    // YouTube fallback → tab capture
+    fallbackCaptureBtn.addEventListener('click', () => {
+      switchMode('capture');
+    });
+
+    // Allow Enter key in YouTube input
+    youtubeUrlInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') youtubeAnalyzeBtn.click();
+    });
+
+    function showYoutubeError(msg) {
+      youtubeError.textContent = msg;
+      youtubeError.classList.remove('hidden');
+    }
+    function hideYoutubeError() {
+      youtubeError.classList.add('hidden');
+    }
+
+    // --- Tab Capture (getDisplayMedia) ---
+    const CAPTURE_DURATION = 10000;
+
+    function isCaptureSupported() {
+      return !!navigator.mediaDevices?.getDisplayMedia;
+    }
+
+    // Disable capture tab if unsupported
+    if (!isCaptureSupported()) {
+      document.querySelector('.input-tab[data-mode="capture"]').title = 'Not supported in this browser. Try Chrome, Firefox, or Safari.';
+      document.querySelector('.input-tab[data-mode="capture"]').style.opacity = '0.4';
+      captureStartBtn.disabled = true;
+      captureStartBtn.title = 'Tab capture is not supported in this browser.';
+    }
+
+    function stereoToMono(buffer) {
+      const left = buffer.getChannelData(0);
+      const right = buffer.getChannelData(1);
+      const mono = new Float32Array(left.length);
+      for (let i = 0; i < left.length; i++) mono[i] = (left[i] + right[i]) / 2;
+      return mono;
+    }
+
+    captureStartBtn.addEventListener('click', async () => {
+      try {
+        const stream = await navigator.mediaDevices.getDisplayMedia({
+          video: { width: 1, height: 1 },
+          audio: true
+        });
+
+        const audioTrack = stream.getAudioTracks()[0];
+        if (!audioTrack) {
+          stream.getTracks().forEach(t => t.stop());
+          showCaptureError('Audio sharing was not enabled. Please check "Share audio" in the dialog and try again.');
+          return;
+        }
+
+        stream.getVideoTracks().forEach(t => t.stop());
+        const audioStream = new MediaStream([audioTrack]);
+
+        captureReady.classList.add('hidden');
+        captureProgress.classList.remove('hidden');
+
+        const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
+          ? 'audio/webm;codecs=opus' : 'audio/webm';
+
+        const recorder = new MediaRecorder(audioStream, { mimeType });
+        const chunks = [];
+        recorder.ondataavailable = (e) => { if (e.data.size > 0) chunks.push(e.data); };
+
+        const blob = await new Promise((resolve, reject) => {
+          recorder.onstop = () => resolve(new Blob(chunks, { type: mimeType }));
+          recorder.onerror = (e) => reject(e.error);
+          recorder.start(100);
+
+          const startTime = Date.now();
+          const progressInterval = setInterval(() => {
+            const elapsed = Date.now() - startTime;
+            const pct = Math.min((elapsed / CAPTURE_DURATION) * 100, 100);
+            const secs = Math.floor(elapsed / 1000);
+            captureMeterFill.style.width = pct + '%';
+            captureCountdown.textContent = `Capturing… ${secs}/${CAPTURE_DURATION/1000}s`;
+            if (elapsed >= CAPTURE_DURATION) {
+              clearInterval(progressInterval);
+              recorder.stop();
+            }
+          }, 200);
+        });
+
+        audioTrack.stop();
+        captureProgress.classList.add('hidden');
+
+        if (blob.size < 1000) {
+          showCaptureError('Not enough audio captured. Make sure the tab is playing audio and try again.');
+          return;
+        }
+
+        if (!audioContext) audioContext = new AudioContext();
+        const audioBuffer = await audioContext.decodeAudioData(await blob.arrayBuffer());
+        const channelData = audioBuffer.numberOfChannels > 1
+          ? stereoToMono(audioBuffer)
+          : audioBuffer.getChannelData(0);
+
+        const bpm = await runEssentia(channelData);
+        displayResult(bpm);
+
+        captureReady.classList.remove('hidden');
+      } catch (err) {
+        captureProgress.classList.add('hidden');
+        if (err.name === 'NotAllowedError' || err.name === 'AbortError') {
+          showCaptureError('Capture cancelled. Click "Select Tab & Capture Audio" to try again.');
+        } else if (err.name === 'NotFoundError') {
+          showCaptureError('No audio source found. Make sure the tab is playing audio.');
+        } else {
+          showCaptureError(err.message || 'Failed to capture audio.');
+        }
+        captureReady.classList.remove('hidden');
+      }
+    });
+
+    captureRetryBtn.addEventListener('click', () => {
+      captureError.classList.add('hidden');
+      captureReady.classList.remove('hidden');
+    });
+
+    function showCaptureError(msg) {
+      captureErrorMsg.textContent = msg;
+      captureError.classList.remove('hidden');
+    }
+
+    // --- Mode Reset Functions ---
+    function resetFileMode() {
+      currentFile = null;
+      fileInput.value = '';
+      dropZone.classList.remove('hidden');
+      uploadPanel.classList.remove('visible');
+      resetUI();
+    }
+
+    function resetYoutubeMode() {
+      youtubeUrlInput.disabled = false;
+      youtubeAnalyzeBtn.disabled = false;
+      youtubeAnalyzeBtn.querySelector('span').textContent = 'Analyze';
+      youtubeLoading.classList.add('hidden');
+      youtubeFallback.classList.add('hidden');
+      youtubeError.classList.add('hidden');
+      youtubeStatus.textContent = 'Fetching audio stream…';
+    }
+
+    function resetCaptureMode() {
+      captureReady.classList.remove('hidden');
+      captureProgress.classList.add('hidden');
+      captureError.classList.add('hidden');
+      captureMeterFill.style.width = '0%';
+    }
+
+    // Analyze again resets to current mode appropriately
+    analyzeAgain.addEventListener('click', () => {
+      if (currentMode === 'file') resetFileMode();
+      else { hideError(); loading.classList.remove('visible'); result.classList.remove('visible'); }
+    });
   </script>
 </body>
 </html>
