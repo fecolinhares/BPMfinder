@@ -738,6 +738,61 @@
       transform: translateY(-2px);
     }
 
+    /* --- YouTube Tab Capture Guide --- */
+    .youtube-guide {
+      margin-top: var(--space-4);
+      padding: var(--space-4);
+      background: var(--surface-elevated);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-card);
+    }
+    .youtube-guide.hidden { display: none; }
+    .guide-header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      margin-bottom: var(--space-3);
+    }
+    .guide-icon { font-size: 1.5rem; }
+    .guide-title {
+      font-family: var(--font-sans);
+      font-size: var(--text-base);
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    .guide-steps {
+      margin: 0 0 var(--space-3) 0;
+      padding-left: var(--space-5);
+      font-size: var(--text-sm);
+      color: var(--text-secondary);
+      line-height: 1.8;
+    }
+    .guide-steps li strong { color: var(--text-primary); }
+    .guide-note {
+      font-size: var(--text-xs);
+      color: var(--text-tertiary);
+      margin: 0 0 var(--space-3) 0;
+    }
+    .guide-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-2) var(--space-4);
+      border: none;
+      border-radius: var(--radius-control);
+      background: var(--accent);
+      color: var(--bg-base);
+      font-family: var(--font-sans);
+      font-size: var(--text-sm);
+      font-weight: 600;
+      cursor: pointer;
+      transition: background var(--transition-fast), transform var(--transition-fast);
+    }
+    .guide-btn:hover {
+      background: var(--accent-hover);
+      transform: translateY(-2px);
+    }
+
     /* --- Capture Options (Mic + Tab) --- */
     .capture-ready {
       text-align: center;
@@ -1395,19 +1450,37 @@
       </div>
       <div class="youtube-error hidden" id="youtubeError"></div>
       <div class="youtube-loading hidden" id="youtubeLoading">
-        <div class="youtube-thumb" id="youtubeThumb">
-          <img id="youtubeThumbImg" alt="" crossorigin="anonymous">
+        <div class="youtube-loading-inner">
+          <div class="youtube-thumb" id="youtubeThumb">
+            <img id="youtubeThumbImg" alt="" crossorigin="anonymous">
+          </div>
+          <div class="youtube-meta">
+            <span class="youtube-title" id="youtubeTitle">—</span>
+            <span class="youtube-channel" id="youtubeChannel">—</span>
+          </div>
+          <div class="spinner" id="youtubeSpinner"></div>
         </div>
-        <div class="youtube-meta">
-          <span class="youtube-title" id="youtubeTitle">—</span>
-          <span class="youtube-channel" id="youtubeChannel">—</span>
-        </div>
-        <div class="spinner"></div>
       </div>
       <span class="youtube-status" id="youtubeStatus">Fetching audio stream…</span>
       <div class="youtube-fallback hidden" id="youtubeFallback">
         <p>⚠️ YouTube API temporarily unavailable.</p>
         <button id="fallbackCaptureBtn" class="btn-accent">Try Tab Capture Instead</button>
+      </div>
+      <div class="youtube-guide hidden" id="youtubeGuide">
+        <div class="guide-header">
+          <span class="guide-icon">🎤</span>
+          <span class="guide-title">Use Tab Capture Instead</span>
+        </div>
+        <ol class="guide-steps">
+          <li>Open this video in a <strong>new browser tab</strong></li>
+          <li>Click <strong>"Capture from Tab"</strong> below</li>
+          <li>Select the YouTube tab when prompted</li>
+        </ol>
+        <p class="guide-note">BPMfinder will capture 10 seconds of audio — enough for accurate BPM detection.</p>
+        <button id="guideCaptureBtn" class="btn-accent guide-btn">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          Capture from Tab
+        </button>
       </div>
     </div>
 
@@ -1646,6 +1719,10 @@
     const youtubeStatus = document.getElementById('youtubeStatus');
     const youtubeFallback = document.getElementById('youtubeFallback');
     const fallbackCaptureBtn = document.getElementById('fallbackCaptureBtn');
+    const youtubeGuide = document.getElementById('youtubeGuide');
+    const guideCaptureBtn = document.getElementById('guideCaptureBtn');
+    const youtubeThumb = document.getElementById('youtubeThumb');
+    const youtubeSpinner = document.getElementById('youtubeSpinner');
     const captureReady = document.getElementById('captureReady');
     const captureStartBtn = document.getElementById('captureStartBtn');
     const micCaptureBtn = document.getElementById('micCaptureBtn');
@@ -1662,10 +1739,9 @@
 
     // --- Piped API Configuration ---
     const PIPED_INSTANCES = [
-      'https://pipedapi.kavin.rocks',
-      'https://pipedapi.tiekoetter.com',
-      'https://pipedapi.private.coffee',
-      'https://pipedapi.r4fo.com',
+      'https://api.piped.private.coffee',
+      'https://pipedapi.adminforge.de',
+      'https://pipedapi.lunar.icu',
     ];
 
     // --- Helpers ---
@@ -1926,18 +2002,64 @@
     }
 
     async function fetchYoutubeAudio(videoId) {
+      let lastError = null;
       for (const instance of PIPED_INSTANCES) {
         try {
           const streamRes = await fetchWithTimeout(`${instance}/streams/${videoId}`);
-          if (!streamRes.ok) continue;
+          if (!streamRes.ok) {
+            // Try to parse error from Piped API (500 with LOGIN_REQUIRED)
+            try {
+              const errData = await streamRes.json();
+              if (errData.error && errData.error.includes('LOGIN_REQUIRED')) {
+                throw new YoutubeBlockedError(errData.message || 'YouTube is blocking this video.');
+              }
+            } catch (parseErr) {
+              if (parseErr instanceof YoutubeBlockedError) throw parseErr;
+            }
+            continue;
+          }
 
           const data = await streamRes.json();
+
+          // Check for Piped API error responses
+          if (data.error) {
+            if (data.error.includes('LOGIN_REQUIRED')) {
+              throw new YoutubeBlockedError(data.message || 'YouTube is blocking this video.');
+            }
+            continue;
+          }
+
+          // Try audioStreams first (traditional)
+          let audioUrl = null;
           const audioStreams = data.audioStreams || [];
-          if (audioStreams.length === 0) continue;
+          if (audioStreams.length > 0) {
+            const best = audioStreams.reduce((a, b) => (a.bitrate || 0) > (b.bitrate || 0) ? a : b);
+            audioUrl = best.url;
+          }
 
-          const best = audioStreams.reduce((a, b) => (a.bitrate || 0) > (b.bitrate || 0) ? a : b);
+          // Fallback: videoStreams with audio (itag 18 = 360p MP4 via Piped proxy)
+          if (!audioUrl) {
+            const videoStreams = data.videoStreams || [];
+            // Prefer itag 18 (360p MP4 via Piped proxy), then any non-videoOnly stream
+            const withAudio = videoStreams
+              .filter(s => !s.videoOnly)
+              .sort((a, b) => {
+                // Prefer itag 18 (known working format)
+                if (a.itag === 18) return -1;
+                if (b.itag === 18) return 1;
+                // Prefer proxy URLs over LBRY/Odysee
+                const aProxy = (a.url || '').includes('proxy.piped') ? 0 : 1;
+                const bProxy = (b.url || '').includes('proxy.piped') ? 0 : 1;
+                return aProxy - bProxy || ((a.height || 9999) - (b.height || 9999));
+              });
+            if (withAudio.length > 0) {
+              audioUrl = withAudio[0].url;
+            }
+          }
 
-          const audioRes = await fetchWithTimeout(best.url);
+          if (!audioUrl) continue;
+
+          const audioRes = await fetchWithTimeout(audioUrl);
           if (!audioRes.ok) continue;
 
           const arrayBuffer = await audioRes.arrayBuffer();
@@ -1948,11 +2070,34 @@
             uploader: data.uploader || 'Unknown'
           };
         } catch (err) {
-          if (err.name === 'AbortError') continue;
+          if (err instanceof YoutubeBlockedError) throw err;
+          if (err.name === 'AbortError') { lastError = 'Request timed out'; continue; }
+          lastError = err.message;
           continue;
         }
       }
-      throw new Error('All Piped API instances are currently unavailable. Try the Tab Capture mode instead.');
+      // All Piped instances failed — throw with last error context
+      throw new YoutubeExtractionError(lastError || 'All Piped instances failed');
+    }
+
+    // Custom error classes for YouTube extraction
+    class YoutubeBlockedError extends Error {
+      constructor(msg) { super(msg); this.name = 'YoutubeBlockedError'; }
+    }
+    class YoutubeExtractionError extends Error {
+      constructor(msg) { super(msg); this.name = 'YoutubeExtractionError'; }
+    }
+
+    // YouTube oEmbed API — CORS-friendly, no key needed, returns title + thumbnail
+    async function fetchYoutubeMetadata(videoId) {
+      const url = `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`;
+      try {
+        const res = await fetch(url, { signal: AbortSignal.timeout(5000) });
+        if (!res.ok) return null;
+        return await res.json();
+      } catch {
+        return null;
+      }
     }
 
     youtubeAnalyzeBtn.addEventListener('click', async () => {
@@ -1969,6 +2114,7 @@
       youtubeLoading.classList.remove('hidden');
       youtubeStatus.textContent = 'Fetching audio stream…';
       youtubeFallback.classList.add('hidden');
+      youtubeGuide.classList.add('hidden');
 
       try {
         const { arrayBuffer, title, thumbnailUrl, uploader } = await fetchYoutubeAudio(videoId);
@@ -1987,17 +2133,36 @@
 
         resetYoutubeMode();
       } catch (err) {
-        youtubeLoading.classList.add('hidden');
-        showYoutubeError(err.message);
-        youtubeFallback.classList.remove('hidden');
+        // Keep loading visible but hide spinner — shows thumb + meta if available
+        youtubeSpinner.classList.add('hidden');
+        youtubeStatus.textContent = '';
+
+        // Try to get metadata via oEmbed so we can at least show the video info
+        const meta = await fetchYoutubeMetadata(videoId);
+        if (meta) {
+          youtubeTitle.textContent = meta.title || '—';
+          youtubeChannel.textContent = meta.author_name || '—';
+          if (meta.thumbnail_url) youtubeThumbImg.src = meta.thumbnail_url;
+        }
+
+        if (err instanceof YoutubeBlockedError) {
+          showYoutubeError('YouTube is blocking extraction for this video. Use Tab Capture below.');
+        } else {
+          showYoutubeError(err.message || 'Could not extract audio from this YouTube video.');
+        }
+        youtubeGuide.classList.remove('hidden');
+
         youtubeUrlInput.disabled = false;
         youtubeAnalyzeBtn.disabled = false;
-        youtubeAnalyzeBtn.querySelector('span').textContent = 'Analyze';
+        youtubeAnalyzeBtn.querySelector('span').textContent = 'Retry';
       }
     });
 
     // YouTube fallback → tab capture
     fallbackCaptureBtn.addEventListener('click', () => {
+      switchMode('capture');
+    });
+    guideCaptureBtn.addEventListener('click', () => {
       switchMode('capture');
     });
 
@@ -2168,9 +2333,11 @@
       youtubeAnalyzeBtn.disabled = false;
       youtubeAnalyzeBtn.querySelector('span').textContent = 'Analyze';
       youtubeLoading.classList.add('hidden');
-      youtubeFallback.classList.add('hidden');
-      youtubeError.classList.add('hidden');
+      youtubeSpinner.classList.remove('hidden');
       youtubeStatus.textContent = 'Fetching audio stream…';
+      youtubeFallback.classList.add('hidden');
+      youtubeGuide.classList.add('hidden');
+      youtubeError.classList.add('hidden');
     }
 
     function resetCaptureMode() {

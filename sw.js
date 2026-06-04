@@ -21,7 +21,7 @@ self.addEventListener('fetch', (event) => {
   if (request.method !== 'GET') return;
   
   // For API/proxy requests, network only — never cache
-  if (request.url.includes('pipedapi') || request.url.includes('pipedproxy')) {
+  if (request.url.includes('pipedapi') || request.url.includes('pipedproxy') || request.url.includes('api.piped') || request.url.includes('proxy.piped') || request.url.includes('oembed')) {
     event.respondWith(fetch(request).catch(() => new Response('{"error":"offline"}', { status: 503, headers: {'Content-Type':'application/json'} })));
     return;
   }
