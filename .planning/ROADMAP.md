@@ -208,3 +208,67 @@ Reset universal `margin: 0` anulava `margin: auto` nativo do `<dialog>`. UA `ins
 | `index.html.md` — clean markdown version of the page for LLM consumption | ✅ |
 | Lighthouse re-check (SEO, A11y, WebMCP/Agentic scores) | ✅ Scores preserved |
 | Impeccable design review post-changes | ✅ No visual regressions |
+
+---
+
+## Phase 10 — YouTube Integration: Piped API Rework 🔄
+
+**Goal:** Fix the broken YouTube URL feature. Currently all 4 Piped instances are dead or CORS-blocked, and the API response format changed (`audioStreams` is always empty). The user sees "All Piped API instances are currently unavailable."
+
+### Diagnosis (2026-06-04)
+
+| Check | Result | Detail |
+|-------|--------|--------|
+| CORS check | ✅ `api.piped.private.coffee` has `Access-Control-Allow-Origin: *` | Only working instance |
+| API response | ✅ Returns 200 with metadata (title, thumbnail, uploader) | Works for some videos (cached ones) |
+| audioStreams | ❌ Always empty `[]` | Piped/NewPipe extractor no longer returns audio-only streams |
+| videoStreams | ✅ Contains streams (itag 18 = 360p MP4 w/ audio) | Can be used as fallback audio source |
+| YouTube bot blocking | ⚠️ Most popular videos return `LOGIN_REQUIRED` | YouTube is blocking anonymous access on Piped's IP |
+| | | |
+| Old instances (4) | ❌ All broken | kavin.rocks (526), tiekoetter.com (timeout), private.coffee (timeout), r4fo.com (timeout) |
+| Proxy CORS | ✅ `proxy.piped.private.coffee` has CORS | MP4 download via proxy works when extractor succeeds |
+
+### Requirements
+
+#### YT-10: Update Piped instances
+- [ ] **YT-01**: Replace 4 dead instances with `https://api.piped.private.coffee` (primary, CORS ✅)
+- [ ] **YT-02**: Add 2-3 fallback instances from current public Piped list
+- [ ] **YT-03**: Each instance tested for CORS + API response before inclusion
+
+#### YT-11: Fix audio stream extraction
+- [ ] **YT-01**: When `audioStreams` is empty, fall back to `videoStreams`
+- [ ] **YT-02**: Select non-videoOnly stream with audio (itag 18 = 360p MP4)
+- [ ] **YT-03**: If multiple non-videoOnly streams, prefer lowest resolution (smallest download)
+- [ ] **YT-04**: If no suitable stream found, show guidance error (not cryptic "unavailable")
+- [ ] **YT-05**: `AudioContext.decodeAudioData` handles MP4 containers (tested ✅)
+
+#### YT-12: Handle YouTube bot blocking
+- [ ] **YT-01**: Detect `LOGIN_REQUIRED` / `SignInConfirmNotBotException` in API error
+- [ ] **YT-02**: Show human-readable message: "YouTube is blocking this video from being extracted. Use Tab Capture instead."
+- [ ] **YT-03**: Detailed step-by-step Tab Capture guide: (1) Open video in new tab, (2) Click "Capture from Tab", (3) Select the YouTube tab
+
+#### YT-13: YouTube oEmbed metadata fallback
+- [ ] **YT-01**: When Piped API fails, use YouTube oEmbed (`https://www.youtube.com/oembed?url=...&format=json`)
+- [ ] **YT-02**: oEmbed supports CORS and requires no API key
+- [ ] **YT-03**: Show video title + thumbnail even when audio extraction fails
+- [ ] **YT-04**: Always show the Tab Capture guide as primary fallback
+
+#### YT-14: UX improvements
+- [ ] **YT-01**: Better loading states — show which step is happening (metadata → stream → download → decode → analyze)
+- [ ] **YT-02**: Tab Capture fallback button more prominent (not hidden in `.youtube-fallback`)
+- [ ] **YT-03**: Show video thumbnail + title even while loading
+- [ ] **YT-04**: "Try another link" button when extraction fails
+- [ ] **YT-05**: Mobile-responsive fallback UI
+
+#### YT-15: Service Worker & Privacy
+- [ ] **YT-01**: SW excludes new working Piped instance from cache (same pattern)
+- [ ] **YT-02**: No analytics/leakage from Piped API calls
+- [ ] **YT-03**: Tab Capture fallback preserves 100% privacy
+
+### Verification
+- [ ] **V-01**: YouTube URL with Rick Astley → BPM detected (best case)
+- [ ] **V-02**: YouTube URL with blocked video → Tab Capture guide shown
+- [ ] **V-03**: Invalid YouTube URL → clear error
+- [ ] **V-04**: All 4 existing input modes still work after changes
+- [ ] **V-05**: Lighthouse scores preserved (no regressions)
+- [ ] **V-06**: Mobile responsive: new fallback UI stacks correctly
