@@ -25,16 +25,31 @@ Users can discover the BPM of any song instantly, privately, and without uploadi
 
 - ✅ All 25 requirements delivered and verified in browser.
 
-### v3 — YouTube Support (Current)
+### v3 — YouTube Support (Complete)
 
 **Goal:** Add YouTube link support via Piped API (primary) and tab audio capture (fallback). Three input modes: audio file upload, YouTube URL, or tab capture.
 
-**Target features:**
-- **Input tabs**: Three modes — File Upload | YouTube URL | Screen Capture
-- **YouTube URL**: Extract video ID → Piped API for metadata → proxy download audio → essentia.js
-- **Tab Capture**: `getDisplayMedia({ audio: true })` → MediaRecorder → AudioContext → essentia.js
-- **Fallback**: If Piped API fails, suggest tab capture as alternative
-- **Preserve all existing file upload functionality**
+**Delivered:**
+- **Input tabs**: File Upload | YouTube URL | Tab Capture (4 modes with Mic in Phase 6)
+- **YouTube URL**: Extract video ID → Piped API for metadata → proxy download audio → essentia.js ✓
+- **Tab Capture**: `getDisplayMedia({ audio: true })` → MediaRecorder → AudioContext → essentia.js ✓
+- **Microphone Capture**: `getUserMedia({ audio: true })` → MediaRecorder → 10s capture → essentia.js ✓
+- **Fallback**: If Piped API fails, suggest tab capture as alternative ✓
+- **Preserved all existing file upload functionality** ✓
+
+### v4 — AI Agent Optimization (Current)
+
+**Goal:** Make BPMfinder easily discoverable and usable by AI agents via llms.txt and WebMCP.
+
+**Delivered:**
+- `/llms.txt` — LLM-friendly markdown with site overview, input modes, usage guidance ✓
+- `/index.html.md` — clean markdown version of the page for LLM consumption ✓
+- WebMCP Declarative API — `<form>` elements annotated with `webmcp-tool` attributes ✓
+- Linked from `robots.txt` and `sitemap.xml` ✓
+
+### v5 — YouTube Link Input with Piped API (Planned)
+
+**Goal:** Allow users to paste a YouTube URL instead of (or in addition to) uploading an audio file — using the existing Piped API pipeline, 100% local and static.
 
 ### Out of Scope
 
@@ -75,4 +90,4 @@ Users can discover the BPM of any song instantly, privately, and without uploadi
 | getDisplayMedia for tab capture | Browser-native screen/audio capture, zero dependencies | ✅ New for v3 |
 
 ---
-*Last updated: 2026-05-26*
+*Last updated: 2026-06-04*

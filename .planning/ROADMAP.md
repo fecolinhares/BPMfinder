@@ -121,22 +121,22 @@ Reset universal `margin: 0` anulava `margin: auto` nativo do `<dialog>`. UA `ins
 **Requirements:** See `.planning/REQUIREMENTS.md` (v3 YouTube Support)
 
 ### YouTube URL (Piped API)
-- [ ] Input tab selector: File | YouTube URL | Screen Capture
-- [ ] URL input field with YouTube link parsing
-- [ ] Piped API integration: fetch metadata + audio stream URL
-- [ ] Audio download via Piped proxy (CORS-friendly)
-- [ ] Error handling + fallback to tab capture
+- [x] Input tab selector: File | YouTube URL | Screen Capture
+- [x] URL input field with YouTube link parsing
+- [x] Piped API integration: fetch metadata + audio stream URL
+- [x] Audio download via Piped proxy (CORS-friendly)
+- [x] Error handling + fallback to tab capture
 
 ### Tab Audio Capture
-- [ ] getDisplayMedia({ audio: true }) integration
-- [ ] MediaRecorder pipeline: capture → blob → decode → analyze
-- [ ] 10-second capture with progress indicator
-- [ ] Browser support detection + graceful fallback
+- [x] getDisplayMedia({ audio: true }) integration
+- [x] MediaRecorder pipeline: capture → blob → decode → analyze
+- [x] 10-second capture with progress indicator
+- [x] Browser support detection + graceful fallback
 
 ### Shared pipeline
-- [ ] Both flows feed into existing essentia.js analysis
-- [ ] BPM display, confidence, tempo classification preserved
-- [ ] Same visual result card for all 3 modes
+- [x] Both flows feed into existing essentia.js analysis
+- [x] BPM display, confidence, tempo classification preserved
+- [x] Same visual result card for all 3 modes
 
 ### Service Worker & Offline
 - [x] SW updated to NOT cache Piped/YouTube responses
@@ -196,15 +196,15 @@ Reset universal `margin: 0` anulava `margin: auto` nativo do `<dialog>`. UA `ins
 
 ---
 
-## Phase 9 — AI Agent Optimization: llms.txt + WebMCP 🔄
+## Phase 9 — AI Agent Optimization: llms.txt + WebMCP ✅
 
 **Goal:** Make BPMfinder easily discoverable and usable by AI agents via llms.txt (LLM-friendly site overview) and WebMCP (Chrome's Declarative API for agent tool registration). Ensure agents can understand and interact with the 4 input modes programmatically.
 
 | **Feature** | **Status** |
 |-------------|-----------|
-| `/llms.txt` — LLM-friendly markdown with site overview, input modes, usage guidance | ⏳ |
-| WebMCP Declarative API — annotate `<form>` elements with `webmcp-tool` attributes | ⏳ |
-| Link `/llms.txt` from `robots.txt` and `sitemap.xml` | ⏳ |
-| `index.html.md` — clean markdown version of the page for LLM consumption | ⏳ |
-| Lighthouse re-check (SEO, A11y, WebMCP/Agentic scores) | ⏳ |
-| Impeccable design review post-changes | ⏳ |
+| `/llms.txt` — LLM-friendly markdown with site overview, input modes, usage guidance | ✅ |
+| WebMCP Declarative API — annotate `<form>` elements with `webmcp-tool` attributes | ✅ |
+| Link `/llms.txt` from `robots.txt` and `sitemap.xml` | ✅ |
+| `index.html.md` — clean markdown version of the page for LLM consumption | ✅ |
+| Lighthouse re-check (SEO, A11y, WebMCP/Agentic scores) | ✅ Scores preserved |
+| Impeccable design review post-changes | ✅ No visual regressions |
