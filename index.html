@@ -560,19 +560,19 @@
     .input-tabs {
       display: flex;
       gap: 0;
-      background: var(--bg-surface);
+      background: var(--bg-elevated);
       border: 1px solid var(--border-default);
-      border-radius: var(--radius-control);
+      border-radius: var(--radius-card);
       overflow: hidden;
-      margin-bottom: var(--space-4);
-      box-shadow: var(--shadow-sm);
+      margin-bottom: var(--space-6);
+      box-shadow: var(--shadow-md);
     }
     .input-tab {
       flex: 1;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: var(--space-1);
+      gap: var(--space-2);
       padding: var(--space-3) var(--space-2);
       background: transparent;
       border: none;
@@ -581,17 +581,16 @@
       font-family: var(--font-sans);
       font-size: var(--text-base);
       font-weight: 500;
-      transition: background var(--transition-fast), color var(--transition-fast), box-shadow var(--transition-fast);
+      transition: background var(--transition-fast), color var(--transition-fast);
       white-space: nowrap;
       position: relative;
-      min-height: 48px;
+      min-height: 56px;
     }
     .input-tab:hover { background: var(--bg-hover); color: var(--text-primary); }
     .input-tab.active {
-      background: var(--primary-dim);
-      color: var(--primary);
+      background: var(--primary);
+      color: var(--secondary);
       font-weight: 600;
-      box-shadow: inset 0 -2px 0 var(--primary);
     }
     .input-tab:focus-visible {
       outline: 2px solid var(--primary);
@@ -601,17 +600,24 @@
     .input-tab-icon {
       display: flex;
       align-items: center;
-      font-size: 1.2rem;
+      font-size: 1.3rem;
       flex-shrink: 0;
     }
     .input-tab-icon svg {
-      width: 18px;
-      height: 18px;
+      width: 22px;
+      height: 22px;
       display: block;
     }
+    .input-tab.active .input-tab-icon svg {
+      filter: brightness(0) invert(1);
+    }
     .input-tab-label {
-      font-size: var(--text-sm);
+      font-size: var(--text-base);
+      font-weight: 500;
       line-height: 1;
+    }
+    .input-tab.active .input-tab-label {
+      font-weight: 600;
     }
 
     /* --- Input Panels (YouTube + Capture) --- */
@@ -1200,10 +1206,11 @@
       .result { padding: var(--space-4); }
       .result-bpm { font-size: 3rem; }
       :root { --text-display: 3rem; }
-      .input-tab { padding: var(--space-2) var(--space-1); font-size: var(--text-sm); min-height: 44px; }
-      .input-tab-icon { font-size: 1rem; }
-      .input-tab-icon svg { width: 16px; height: 16px; }
-      .input-tab-label { font-size: var(--text-xs); }
+      .input-tab { padding: var(--space-2) var(--space-1); font-size: var(--text-base); min-height: 48px; gap: var(--space-1); }
+      .input-tab-icon { font-size: 1.1rem; }
+      .input-tab-icon svg { width: 18px; height: 18px; }
+      .input-tab-label { font-size: var(--text-sm); }
+      .input-tabs { margin-bottom: var(--space-4); }
       .youtube-input-row { flex-direction: column; }
       .youtube-analyze-btn { width: 100%; }
       .youtube-loading { flex-wrap: wrap; }
