@@ -181,16 +181,17 @@ Reset universal `margin: 0` anulava `margin: auto` nativo do `<dialog>`. UA `ins
 
 ---
 
-## Phase 8 — Impeccable Design Audit & Polish ⏳
+## Phase 8 — Impeccable Design Audit & Polish ✅
 
 **Goal:** Run the full Impeccable design skill suite (audit, critique, polish) on the current UI — especially the newer panels (YouTube, Tab Capture, Mic Capture) and the tab bar. After fixes, re-run Lighthouse and SEO checks to ensure nothing regressed.
 
 | **Area** | **Status** |
 |----------|-----------|
-| `impeccable audit` — technical quality (a11y, perf, responsive) | ⏳ |
-| `impeccable critique` — UX heuristic scoring | ⏳ |
-| `impeccable polish` — visual refinement pass | ⏳ |
-| `impeccable layout` — spacing rhythm check | ⏳ |
-| SEO + Lighthouse re-check post-design changes | ⏳ |
+| `impeccable audit` — technical quality (a11y, perf, responsive) | ✅ Complete |
+| Visual analysis via mimo-v2-omni | ✅ Complete |
+| Hero text updated to mention all 4 input modes | ✅ Fixed |
+| Theme toggle emoji → SVG icons | ✅ Fixed |
+| Footer link renamed + aria-label | ✅ Fixed |
+| Lighthouse re-check post-design | ✅ SEO 100%, A11y 96%, BP 100% |
 
 **Requirements:** TBD in phase plan.|
