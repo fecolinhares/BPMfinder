@@ -111,3 +111,35 @@ Reset universal `margin: 0` anulava `margin: auto` nativo do `<dialog>`. UA `ins
 - [x] Reduced-motion: overrides card-enter, stagger-fade-in, dialog-enter
 - [x] Responsive mobile: BPM at 3rem, tighter padding, full-width cards
 - [x] All existing JS intact: BPM detection, tempo modal, theme toggle, service worker
+
+---
+
+## Milestone v3 — YouTube Support (Current)
+
+## Phase 5 — YouTube Link + Tab Capture
+
+**Goal:** Add YouTube link support and tab audio capture alongside existing file upload. Three input modes: audio file, YouTube URL, tab capture.
+
+**Requirements:** See `.planning/REQUIREMENTS.md` (v3 YouTube Support)
+
+### YouTube URL (Piped API)
+- [ ] Input tab selector: File | YouTube URL | Screen Capture
+- [ ] URL input field with YouTube link parsing
+- [ ] Piped API integration: fetch metadata + audio stream URL
+- [ ] Audio download via Piped proxy (CORS-friendly)
+- [ ] Error handling + fallback to tab capture
+
+### Tab Audio Capture
+- [ ] getDisplayMedia({ audio: true }) integration
+- [ ] MediaRecorder pipeline: capture → blob → decode → analyze
+- [ ] 10-second capture with progress indicator
+- [ ] Browser support detection + graceful fallback
+
+### Shared pipeline
+- [ ] Both flows feed into existing essentia.js analysis
+- [ ] BPM display, confidence, tempo classification preserved
+- [ ] Same visual result card for all 3 modes
+
+### Service Worker & Offline
+- [ ] SW updated to NOT cache Piped/YouTube responses
+- [ ] Features gracefully degrade when offline (file upload still works)

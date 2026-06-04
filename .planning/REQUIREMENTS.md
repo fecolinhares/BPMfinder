@@ -1,47 +1,66 @@
-# Requirements — v2 Rhythmcore Visual Redesign ✅
+# Requirements — v3 YouTube Support
 
-## COLOR-01: Sync color tokens with Rhythmcore palette
-- [x] **COLOR-01**: Replace `--primary` token with `#06B6D4` (cyan) for secondary UI elements
-- [x] **COLOR-02**: Keep `--accent` amber `#F97316` (already matches, verify contrast)
-- [x] **COLOR-03**: Add `--surface` token (`#4A5568` equivalent in OKLCH dark/light)
-- [x] **COLOR-04**: Adjust dark theme surface/background to Rhythmcore's compact card hierarchy
-- [x] **COLOR-05**: Adjust light theme to match Rhythmcore's `background: #FFFFFF`, `surface: #4A5568`, `text-primary: #111827`, `border: #E5E7EB`
+## YT-01: Three input modes
+- [ ] **YT-01**: User can choose between 3 modes: File Upload, YouTube URL, or Tab Capture
+- [ ] **YT-02**: Input tabs/modes are visually clear and mutually exclusive
+- [ ] **YT-03**: Existing file upload flow is 100% preserved (drop zone, auto-analyze, all validation)
 
-## TYPE-01: Sync typography with Rhythmcore
-- [x] **TYPE-01**: Load **Inter** from Google Fonts for display/body
-- [x] **TYPE-02**: Load **JetBrains Mono** from Google Fonts for labels and metadata
-- [x] **TYPE-03**: Update `--font-sans` to Inter (with system fallback)
-- [x] **TYPE-04**: Update `--font-mono` to JetBrains Mono (with mono fallback)
-- [x] **TYPE-05**: Set display-lg scale: `64px`, weight 500, line-height 1.04 for hero BPM
-- [x] **TYPE-06**: Set body-md: `16px`, weight 400, line-height 1.6
-- [x] **TYPE-07**: Set label-md (JetBrains Mono): `12px`, weight 600, line-height 1.2
+## YT-02: YouTube URL input
+- [ ] **YT-01**: URL input field accepts YouTube links (youtube.com, youtu.be, m.youtube.com)
+- [ ] **YT-02**: Video ID extraction from any YouTube URL format
+- [ ] **YT-03**: "Analyze" button triggers YouTube flow
+- [ ] **YT-04**: Loading state shows video title + thumbnail while processing
 
-## LAYOUT-01: Card-based Rhythmcore layout
-- [x] **LAYOUT-01**: Redesign drop zone as a surface card (8px radius, subtle border, shadow)
-- [x] **LAYOUT-02**: Redesign upload panel area as surface card
-- [x] **LAYOUT-03**: Redesign result area as compact metric card
-- [x] **LAYOUT-04**: Card-padding 24px, gap 16px, section-padding 80px
-- [x] **LAYOUT-05**: More compact dashboard hierarchy (less whitespace between sections)
+## YT-03: Piped API integration
+- [ ] **YT-01**: Fetch video metadata from `https://pipedapi.kavin.rocks/streams/{videoId}`
+- [ ] **YT-02**: Extract audio stream URL from Piped response
+- [ ] **YT-03**: Download audio via Piped proxy endpoint (CORS-friendly)
+- [ ] **YT-04**: Handle Piped API errors gracefully (timeout, 4xx, 5xx, empty response)
+- [ ] **YT-05**: Graceful fallback: if Piped fails, show "Try Tab Capture instead" message
+- [ ] **YT-06**: Configurable Piped instance (user can change if default is down)
 
-## MOTION-01: Add Rhythmcore transitions
-- [x] **MOTION-01**: Add staggered entrance animation to result card (stagger children)
-- [x] **MOTION-02**: Add hover lift effect to cards (`translateY(-2px)` + shadow)
-- [x] **MOTION-03**: Add scroll-triggered fade-in for main sections
-- [x] **MOTION-04**: Smooth restrained easing (cubic-bezier) across all transitions
-- [x] **MOTION-05**: Preserve reduced-motion support
+## YT-04: Tab audio capture
+- [ ] **YT-01**: "Capture from YouTube Tab" button using `navigator.mediaDevices.getDisplayMedia({ audio: true, video: false })`
+- [ ] **YT-02**: User-friendly prompt explaining what to select (which browser tab)
+- [ ] **YT-03**: Progress indicator showing capture duration (e.g., "Capturing: 3/10 seconds")
+- [ ] **YT-04**: Default capture duration of ~10 seconds (enough for accurate BPM)
+- [ ] **YT-05**: MediaRecorder captures audio stream as blob
+- [ ] **YT-06**: Convert blob to ArrayBuffer → AudioContext.decodeAudioData → essentia.js
+- [ ] **YT-07**: Handle errors: permission denied, no audio track, unsupported browser
+- [ ] **YT-08**: Detect `getDisplayMedia` support — show graceful message if unavailable
 
-## COMP-01: Component refinements
-- [x] **COMP-01**: Buttons use primary/accent colors with 8px radius
-- [x] **COMP-02**: Button hover states with lift effect
-- [x] **COMP-03**: Result BPM uses JetBrains Mono with display-lg sizing
-- [x] **COMP-04**: Loading spinner styled with primary cyan
-- [x] **COMP-05**: Error state styled as surface card with border
+## YT-05: Audio processing pipeline
+- [ ] **YT-01**: Both YouTube and Tab Capture flows feed into same essentia.js analysis
+- [ ] **YT-02**: Same BPM display, confidence, and tempo classification as file upload
+- [ ] **YT-03**: Downmix captured/streamed audio to mono if needed for essentia.js
+- [ ] **YT-04**: Handle variable sample rates (YouTube audio may be 48kHz)
 
-## RESP-01: Responsive adjustments
-- [x] **RESP-01**: Mobile adjustments preserve Rhythmcore density
-- [x] **RESP-02**: All sections stack correctly below 480px
-- [x] **RESP-03**: BPM display scales down gracefully on mobile (3rem)
+## YT-06: UI & UX
+- [ ] **YT-01**: Input mode selector styled as tabs or cards (Rhythmcore design consistent)
+- [ ] **YT-02**: URL input styled as Rhythmcore card with paste-friendly UX
+- [ ] **YT-03**: Capture button styled as primary action with icon
+- [ ] **YT-04**: All new UI respects dark/light theme
+- [ ] **YT-05**: Mobile responsive: modes stack vertically on small screens
+- [ ] **YT-06**: Keyboard accessible: tab navigation, Enter to analyze/capture
+- [ ] **YT-07**: Reduced-motion: no new animations without `prefers-reduced-motion` check
+
+## YT-07: Error handling
+- [ ] **YT-01**: Invalid YouTube URL → clear error message
+- [ ] **YT-02**: Piped API rate limit / down → fallback suggestion
+- [ ] **YT-03**: Tab capture permission denied → human-readable explanation
+- [ ] **YT-04**: getDisplayMedia unsupported → message with supported browsers
+- [ ] **YT-05**: Audio decode failure → meaningful error (not cryptic)
+
+## YT-08: Service Worker & Offline
+- [ ] **YT-01**: SW does not cache Piped API responses or audio streams
+- [ ] **YT-02**: YouTube/Tab features gracefully show "offline" message when offline
+- [ ] **YT-03**: File upload still works offline (existing behavior preserved)
+
+## YT-09: Privacy
+- [ ] **YT-01**: All YouTube processing stays client-side (no proxy through our server)
+- [ ] **YT-02**: Tab capture never leaves the browser — entire pipeline is local
+- [ ] **YT-03**: No YouTube API keys exposed (Piped API is public, no key needed)
+- [ ] **YT-04**: No analytics on YouTube queries (same privacy stance as file upload)
 
 ---
-## Verificado ✅
-All 25 requirements delivered and verified in browser. Phase 4 complete.
+*Created: 2026-06-04 — v3 YouTube Support Milestone*

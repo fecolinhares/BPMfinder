@@ -19,38 +19,46 @@ Users can discover the BPM of any song instantly, privately, and without uploadi
 - [x] **UI-01** to **UI-07**: Clean layout, theme toggle, responsive, typography, no placeholders
 - [x] **DEP-01** to **DEP-04**: Self-contained, single HTML, GitHub Pages, offline SW
 
-### v2 — Rhythmcore Visual Redesign (Current)
+### v2 — Rhythmcore Visual Redesign (Complete)
 
 **Goal:** Apply the Rhythmcore Interface design system to visually redesign the entire BPMfinder UI.
 
+- ✅ All 25 requirements delivered and verified in browser.
+
+### v3 — YouTube Support (Current)
+
+**Goal:** Add YouTube link support via Piped API (primary) and tab audio capture (fallback). Three input modes: audio file upload, YouTube URL, or tab capture.
+
 **Target features:**
-- Sync color system with Rhythmcore tokens (primary cyan #06B6D4, accent amber #F97316)
-- Add Inter + JetBrains Mono typography
-- Card-based layout with surface backgrounds and subtle borders
-- Dashboard-inspired compact operational hierarchy
-- Staggered entrance animations, hover lift, smooth transitions
-- Mobile responsive preserved
+- **Input tabs**: Three modes — File Upload | YouTube URL | Screen Capture
+- **YouTube URL**: Extract video ID → Piped API for metadata → proxy download audio → essentia.js
+- **Tab Capture**: `getDisplayMedia({ audio: true })` → MediaRecorder → AudioContext → essentia.js
+- **Fallback**: If Piped API fails, suggest tab capture as alternative
+- **Preserve all existing file upload functionality**
 
 ### Out of Scope
 
-- YouTube link support — requires backend proxy, violates no-backend constraint
 - Backend processing of any kind
 - Audio visualization / waveform
-- History / localStorage of past detections (v2 candidate)
+- History / localStorage of past detections
+- Downloading YouTube audio (analysis only, no save-to-disk)
 
 ## Context
 
 - Pure frontend: HTML + CSS + JavaScript (no frameworks)
 - BPM detection via [essentia.js](https://github.com/MTG/essentia.js) — WebAssembly port of Essentia (UPF)
-- Works offline after first load (Service Worker)
+- YouTube metadata via [Piped API](https://github.com/TeamPiped/Piped) (public, no API key needed)
+- Tab audio capture via `navigator.mediaDevices.getDisplayMedia()`
+- Works offline after first load (Service Worker) — YouTube/Piped features require internet
 - Deploy target: GitHub Pages
 - DESIGN.md at project root = Rhythmcore Interface design contract (source of truth for visual decisions)
 
 ## Constraints
 
-- **[No Backend]**: 100% static. No Node.js runtime, no API calls, no database.
+- **[No Backend]**: 100% static. No server-side code. Piped API is a public third-party service, not our backend.
 - **[File Size]**: Audio decoding in memory — files >200 MB rejected.
-- **[Browser API]**: Relies on Web Audio API + AudioContext — requires modern browser.
+- **[Browser API]**: Relies on Web Audio API + AudioContext — requires modern browser. Tab capture requires `getDisplayMedia` support (Chrome 74+, Firefox 76+, Safari 17+).
+- **[Piped API]**: Depends on public Piped instance availability. Falls back to tab capture if unavailable.
 - **[License]**: MIT — use freely, credit required.
 
 ## Key Decisions
@@ -59,10 +67,12 @@ Users can discover the BPM of any song instantly, privately, and without uploadi
 |----------|-----------|---------|
 | essentia.js for BPM detection | Most robust client-side BPM lib; academic-grade algorithms | ✅ Good |
 | Auto-analyze on file select | Remove unnecessary click; instant feedback | ✅ Good |
-| No YouTube support | Requires backend proxy; violates no-backend constraint | ✅ Good |
+| No YouTube support | Previously required backend proxy; Piped API + tab capture solve this | ✅ Replaced by Piped + Tab Capture |
 | Vanilla HTML/CSS/JS | Zero build tooling, deploy anywhere, no framework lock-in | ✅ Good |
 | MIT License | Permissive — use freely with credit | ✅ Good |
-| Rhythmcore Interface design | Neuform Featured template by Meng To — BPM-native design language | ✅ In Progress |
+| Rhythmcore Interface design | Neuform Featured template by Meng To — BPM-native design language | ✅ Complete |
+| Piped API for YouTube metadata | Public API, no key needed, CORS-enabled on proxy endpoint | ✅ New for v3 |
+| getDisplayMedia for tab capture | Browser-native screen/audio capture, zero dependencies | ✅ New for v3 |
 
 ---
 *Last updated: 2026-05-26*
