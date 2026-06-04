@@ -5,16 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="index, follow">
   <title>BPMfinder — Free Online BPM Tempo Analyzer | Instant Beat Detection</title>
-  <meta name="description" content="Free online BPM finder and tempo analyzer. Instantly detect the BPM of any song in your browser — no uploads, no servers, privacy-safe. 100% free for DJs, producers, and musicians.">
-  <meta name="keywords" content="BPM finder, BPM analyzer, tempo finder, beat detector, free BPM detector, song tempo analyzer, BPM counter, audio BPM detection">
+  <meta name="description" content="Free online BPM finder and tempo analyzer. Upload audio, paste a YouTube link, or capture live audio from your mic or browser tab — detect BPM instantly with no servers, sign-ups, or data uploads. 100% private. Free for DJs, producers, and musicians.">
+  <meta name="keywords" content="BPM finder, BPM analyzer, tempo finder, beat detector, free BPM detector, song tempo analyzer, BPM counter, audio BPM detection, YouTube BPM finder, microphone BPM detector, tab audio capture, online BPM detector no upload">
   <meta property="og:title" content="BPMfinder — Free Online BPM Tempo Analyzer">
-  <meta property="og:description" content="Instantly detect the BPM of any song in your browser. Privacy-safe, no uploads, 100% free.">
+  <meta property="og:description" content="Detect BPM from audio files, YouTube links, microphone, or browser tabs. 100% private, no servers, no sign-ups.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://fecolinhares.github.io/BPMfinder/">
   <meta property="og:image" content="https://fecolinhares.github.io/BPMfinder/og-bpmfinder.png">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="BPMfinder — Free Online BPM Analyzer">
-  <meta name="twitter:description" content="Detect BPM instantly in your browser. No uploads, no servers. 100% free.">
+  <meta name="twitter:description" content="Detect BPM from audio files, YouTube, microphone, or browser tabs. 100% private.">
   <link rel="canonical" href="https://fecolinhares.github.io/BPMfinder/">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎵</text></svg>">
 
@@ -30,8 +30,8 @@
     gtag('config', 'GA_MEASUREMENT_ID_PLACEHOLDER', { anonymize_ip: true });
   </script>
 
-  <!-- OG Image fallback: inline SVG for social preview -->
-  <link rel="image_src" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1200' height='630'%3E%3Crect width='1200' height='630' fill='%230E0E0E'/%3E%3Ctext x='600' y='280' text-anchor='middle' font-family='Inter, system-ui' font-size='72' font-weight='700' fill='%23F97316'%3EBPMfinder%3C/text%3E%3Ctext x='600' y='360' text-anchor='middle' font-family='Inter, system-ui' font-size='28' fill='%23999'%3EFree Online BPM Tempo Analyzer%3C/text%3E%3Ctext x='600' y='420' text-anchor='middle' font-family='Inter, system-ui' font-size='20' fill='%23666'%3EInstant · Private · 100% Free%3C/text%3E%3Ccircle cx='180' cy='180' r='80' fill='%2306B6D4' opacity='0.15'/%3E%3Ccircle cx='1020' cy='450' r='120' fill='%23F97316' opacity='0.1'/%3E%3C/svg%3E">
+  <!-- OG Image fallback: inline SVG for social preview — shows all 4 input modes -->
+  <link rel="image_src" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1200' height='630'%3E%3Crect width='1200' height='630' fill='%230E0E0E'/%3E%3Ctext x='600' y='220' text-anchor='middle' font-family='system-ui' font-size='64' font-weight='700' fill='%23F97316'%3EBPMfinder%3C/text%3E%3Ctext x='600' y='280' text-anchor='middle' font-family='system-ui' font-size='22' fill='%23a0a0a0'%3EDetect BPM from audio %E2%80%A2 YouTube %E2%80%A2 Mic %E2%80%A2 Tab%3C/text%3E%3Ctext x='600' y='340' text-anchor='middle' font-family='system-ui' font-size='18' fill='%23666'%3E100%25 private %E2%80%A2 No servers %E2%80%A2 Free Forever%3C/text%3E%3Ccircle cx='180' cy='180' r='80' fill='%2306B6D4' opacity='0.15'/%3E%3Ccircle cx='1020' cy='450' r='120' fill='%23F97316' opacity='0.1'/%3E%3C/svg%3E">
 
   <!-- Preconnect to CDN and Google Fonts -->
   <link rel="preconnect" href="https://cdn.jsdelivr.net">
@@ -47,10 +47,10 @@
     "@type": "WebApplication",
     "name": "BPMfinder",
     "url": "https://fecolinhares.github.io/BPMfinder/",
-    "description": "Free online BPM finder and tempo analyzer. Detect the BPM of any song instantly in your browser — no uploads, no servers, privacy-safe. 100% free for DJs, producers, and musicians.",
+    "description": "Free online BPM finder and tempo analyzer. Upload audio files, paste YouTube links, or capture audio from your microphone or browser tab — detect the BPM of any song instantly entirely client-side. No servers, no sign-ups, no data uploads. 100% free for DJs, producers, and musicians.",
     "applicationCategory": "Multimedia",
     "operatingSystem": "Windows, macOS, Linux, ChromeOS, Android, iOS",
-    "browserRequirements": "Requires modern browser with Web Audio API support (Chrome, Firefox, Safari, Edge)",
+    "browserRequirements": "Requires modern browser with Web Audio API (Chrome, Firefox, Safari, Edge). Tab capture requires getDisplayMedia support (Chrome 74+, Firefox 76+, Safari 17+). Microphone capture requires getUserMedia in a secure context (HTTPS or localhost).",
     "offers": {
       "@type": "Offer",
       "price": "0",
@@ -64,13 +64,17 @@
       "url": "https://github.com/fecolinhares"
     },
     "featureList": [
-      "BPM detection from audio files",
-      "Tempo classification (Grave to Prestissimo)",
-      "Confidence indicator",
-      "Dark and light themes",
-      "Drag-and-drop file upload",
-      "Auto-analyze on file select",
-      "Offline support via Service Worker"
+      "BPM detection from audio files (MP3, WAV, FLAC, OGG)",
+      "BPM detection from YouTube links via Piped API",
+      "BPM detection from microphone input (getUserMedia)",
+      "BPM detection from browser tab audio capture (getDisplayMedia)",
+      "Tempo classification (Grave to Prestissimo) with reference modal",
+      "Confidence indicator with color coding",
+      "Dark and light themes with persistent toggle",
+      "Drag-and-drop file upload with auto-analyze",
+      "Offline support via Service Worker for file uploads",
+      "100% private — no uploads to servers, all processing client-side",
+      "Responsive design for mobile, tablet, and desktop"
     ],
     "screenshot": "https://fecolinhares.github.io/BPMfinder/og-bpmfinder.png"
   }

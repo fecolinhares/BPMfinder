@@ -1,14 +1,14 @@
 # STATE: BPMfinder
 
-**Status:** 🟢 Phase 5 complete — YouTube Support
+**Status:** 🟢 Phase 6 complete — Microphone Capture
 **Last updated:** 2026-06-04
 
 ## Project Reference
 
-See: `.planning/PROJECT.md` (updated 2026-06-04)
+See: `.planning/PROJECT.md`
 
 **Core value:** Users can discover the BPM of any song instantly, privately, and without uploading files to any server.
-**Current focus:** Milestone v3 — YouTube Support
+**Current focus:** Phase 7 — SEO & Lighthouse Optimization
 
 ## Phase Progress
 
@@ -19,20 +19,19 @@ See: `.planning/PROJECT.md` (updated 2026-06-04)
 | Phase 3 — Helper Modal: Tempo Reference | ✅ Complete |
 | Phase 4 — Rhythmcore Visual Redesign | ✅ Complete |
 | Phase 5 — YouTube Link + Tab Capture | ✅ Complete |
+| Phase 6 — Microphone Capture | ✅ Complete |
+| Phase 7 — SEO & Lighthouse Optimization | 🔄 In progress |
+| Phase 8 — Impeccable Design Audit & Polish | ⏳ Planned |
 
-## Milestone v3 — YouTube Support (Complete)
+## Features Delivered (Full)
 
-**Commit:** `81af6b4`
-
-### Three Input Modes
-
-**📁 File Upload (existing)**
+### 📁 File Upload
 - Drop zone + click-to-browse → auto-analyze
 - Validates types (MP3, WAV, FLAC, OGG, etc.) and size (<200MB)
 - essentia.js WASM → BPM + confidence + tempo classification
 - 100% offline (Service Worker)
 
-**🔗 YouTube URL**
+### 🔗 YouTube URL
 - Paste YouTube link → extract video ID
 - Piped API (public, no key): fetch audio stream metadata
 - Audio download via Piped Proxy (CORS ✅)
@@ -41,46 +40,28 @@ See: `.planning/PROJECT.md` (updated 2026-06-04)
 - If all instances fail: "Try Tab Capture Instead" fallback button
 - Supports: youtube.com/watch?v=, youtu.be/, shorts/, embed/
 
-**🖥️ Tab Capture**
+### 🎤 Microphone Capture
+- getUserMedia({ audio: true }) integration
+- MediaRecorder pipeline: capture → blob → decode → analyze
+- 10-second capture with progress indicator
+- Permission denied/not found error handling
+- Source indicator shows "from microphone"
+
+### 🖥️ Tab Capture
 - getDisplayMedia({ video: {w:1,h:1}, audio: true }) → drop video track
 - MediaRecorder captures 10 seconds of audio
 - Real-time progress bar + countdown (0/10s → 10/10s)
 - Stereo → mono conversion
-- Browser support detection (disables tab if unsupported)
-- Handles: permission denied, no audio track, capture too short
+- Browser support detection + contextual error feedback
 
-### Shared Pipeline
-- `runEssentia()` function extracted from `detectBPM()`
-- All 3 modes feed into the same essentia.js RhythmExtractor2013
+### Shared Pipeline (all 4 modes)
+- `runEssentia()` shared function for all input modes
 - Same BPM display, animated counter, confidence color-coding
-- Source indicator: "from file" / "from YouTube" / "from tab capture"
+- Source indicator: file / YouTube / tab capture / microphone
 
 ### Service Worker
 - Piped API/proxy URLs excluded from cache (network only)
 - File upload still works offline
-
-### UI
-- Tab bar with 3 modes (File | YouTube | Capture)
-- Rhythmcore design tokens reused throughout
-- Mobile: tabs show icons only, inputs stack vertically
-- Dark/light theme: all new elements render correctly in both
-- Keyboard: Tab navigation, Enter to analyze/capture
-
-## Features Delivered (v1 + v2 + v3)
-
-### YouTube URL (Piped API)
-- URL parsing from multiple YouTube formats
-- Public API (no key required)
-- Configurable instance list with fallback
-- Proxy download with CORS support
-- Video metadata display (title, channel, thumbnail)
-- Graceful error + fallback to tab capture
-
-### Tab Capture (getDisplayMedia)
-- Browser-native screen/tab audio capture
-- 10-second recording with visual progress
-- Automatic mono downmix
-- Support detection + graceful unsupported message
 
 ## License
 

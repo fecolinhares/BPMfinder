@@ -144,25 +144,53 @@ Reset universal `margin: 0` anulava `margin: auto` nativo do `<dialog>`. UA `ins
 
 ---
 
-## Phase 6 — Microphone Capture 🎤
+## Phase 6 — Microphone Capture ✅
 
 **Goal:** Add microphone audio capture as a second option in the Capture tab. User can choose between Tab Capture (existing) and Mic Capture (new).
 
 **Requirements:** See `.planning/tasks/phase-06/REQUIREMENTS.md`
 
 ### Microphone Capture
-- [ ] `getUserMedia({ audio: true })` integration alongside existing tab capture
-- [ ] UI: two buttons in capture panel — "Capture from Microphone" + "Capture from Tab"
-- [ ] MediaRecorder pipeline (same 10s pattern as tab capture)
-- [ ] Permission handling: denied → clear error message
-- [ ] Privacy indicator: visual "mic is recording" state
-
-### Shared pipeline
-- [ ] Mic blob → AudioBuffer → runEssentia() → same displayResult()
-- [ ] Source indicator shows "from microphone"
-- [ ] Progress bar + countdown (same as tab capture)
+- [x] `getUserMedia({ audio: true })` integration alongside existing tab capture
+- [x] UI: two buttons in capture panel — "Capture from Microphone" + "Capture from Tab"
+- [x] Shared startCaptureSession() pipeline (MediaRecorder → blob → decode → essentia)
+- [x] Permission handling: denied → clear error message
+- [x] Source indicator shows "from microphone"
 
 ### Edge cases
-- [ ] No mic connected → clear error
-- [ ] Mic permission blocked → guidance to enable in browser settings
-- [ ] Silent recording → warn if audio level is too low
+- [x] No mic connected → specific error
+- [x] Mic permission blocked → guidance to enable in browser settings
+- [x] Tab capture refactored to use same shared pipeline
+
+---
+
+## Phase 7 — SEO & Lighthouse Optimization 🔄
+
+**Goal:** Update all SEO metadata and structured data to reflect the full feature set (YouTube, Tab Capture, Mic Capture), optimize Lighthouse scores, and ensure the app ranks well for BPM-related searches.
+
+| **Area** | **Current** | **Target** |
+|----------|------------|------------|
+| Meta description | Only mentions file upload | Covers all 4 input modes |
+| JSON-LD featureList | 7 features, no YouTube/Capture/Mic | All 4 input modes listed |
+| OG image | Generic SVG, no feature preview | Updated to reflect current features |
+| sitemap.xml | Single URL, old lastmod | Updated lastmod + priority |
+| Lighthouse Perf | Unknown | ≥ 90 all categories |
+| Lighthouse SEO | Unknown | ≥ 95 |
+
+**Requirements:** TBD in phase plan.
+
+---
+
+## Phase 8 — Impeccable Design Audit & Polish ⏳
+
+**Goal:** Run the full Impeccable design skill suite (audit, critique, polish) on the current UI — especially the newer panels (YouTube, Tab Capture, Mic Capture) and the tab bar. After fixes, re-run Lighthouse and SEO checks to ensure nothing regressed.
+
+| **Area** | **Status** |
+|----------|-----------|
+| `impeccable audit` — technical quality (a11y, perf, responsive) | ⏳ |
+| `impeccable critique` — UX heuristic scoring | ⏳ |
+| `impeccable polish` — visual refinement pass | ⏳ |
+| `impeccable layout` — spacing rhythm check | ⏳ |
+| SEO + Lighthouse re-check post-design changes | ⏳ |
+
+**Requirements:** TBD in phase plan.|
