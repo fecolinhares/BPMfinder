@@ -1,6 +1,10 @@
 User-agent: *
 Allow: /
 
+# AI agent / LLM entry point
+Allow: /llms.txt
+Allow: /index.html.md
+
 # BPMfinder is a single-page app — everything is at /
 # No admin, API, or private areas to block
 

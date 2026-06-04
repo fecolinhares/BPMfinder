@@ -164,7 +164,7 @@ Reset universal `margin: 0` anulava `margin: auto` nativo do `<dialog>`. UA `ins
 
 ---
 
-## Phase 7 — SEO & Lighthouse Optimization 🔄
+## Phase 7 — SEO & Lighthouse Optimization ✅
 
 **Goal:** Update all SEO metadata and structured data to reflect the full feature set (YouTube, Tab Capture, Mic Capture), optimize Lighthouse scores, and ensure the app ranks well for BPM-related searches.
 
@@ -177,7 +177,7 @@ Reset universal `margin: 0` anulava `margin: auto` nativo do `<dialog>`. UA `ins
 | Lighthouse Perf | Unknown | ≥ 90 all categories |
 | Lighthouse SEO | Unknown | ≥ 95 |
 
-**Requirements:** TBD in phase plan.
+**Delivered:** SEO 100%, A11y 96%, BP 100%, Performance 84%
 
 ---
 
@@ -194,4 +194,17 @@ Reset universal `margin: 0` anulava `margin: auto` nativo do `<dialog>`. UA `ins
 | Footer link renamed + aria-label | ✅ Fixed |
 | Lighthouse re-check post-design | ✅ SEO 100%, A11y 96%, BP 100% |
 
-**Requirements:** TBD in phase plan.|
+---
+
+## Phase 9 — AI Agent Optimization: llms.txt + WebMCP 🔄
+
+**Goal:** Make BPMfinder easily discoverable and usable by AI agents via llms.txt (LLM-friendly site overview) and WebMCP (Chrome's Declarative API for agent tool registration). Ensure agents can understand and interact with the 4 input modes programmatically.
+
+| **Feature** | **Status** |
+|-------------|-----------|
+| `/llms.txt` — LLM-friendly markdown with site overview, input modes, usage guidance | ⏳ |
+| WebMCP Declarative API — annotate `<form>` elements with `webmcp-tool` attributes | ⏳ |
+| Link `/llms.txt` from `robots.txt` and `sitemap.xml` | ⏳ |
+| `index.html.md` — clean markdown version of the page for LLM consumption | ⏳ |
+| Lighthouse re-check (SEO, A11y, WebMCP/Agentic scores) | ⏳ |
+| Impeccable design review post-changes | ⏳ |

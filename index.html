@@ -41,6 +41,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 
   <!-- Structured data: WebApplication -->
+  <meta name="webmcp" content="BPMfinder provides four tools: uploadFile analyzes audio files, analyzeYoutube extracts BPM from YouTube URLs, captureMic records microphone audio, captureTab captures tab audio. All return BPM, confidence, and tempo classification.">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -157,7 +158,7 @@
 
       --text-primary: oklch(0.92 0.005 60);
       --text-secondary: oklch(0.79 0.01 60);
-      --text-tertiary: oklch(0.68 0.01 60);
+      --text-tertiary: oklch(0.70 0.01 60);
 
       /* Border system — subtle, matte */
       --border-subtle: oklch(0.18 0.01 60);
@@ -1241,7 +1242,6 @@
       margin-top: var(--space-2);
       font-size: 0.625rem;
       color: var(--text-tertiary);
-      opacity: 0.6;
     }
 
     /* --- Responsive (mobile) --- */
@@ -1356,7 +1356,7 @@
     </div>
 
     <!-- File Panel -->
-    <div id="panelFile" class="input-panel visible">
+    <div id="panelFile" class="input-panel visible" webmcp-tool webmcp-tool-name="uploadFile" webmcp-tool-description="Upload an audio file for BPM detection. Drag and drop or click to browse. Supports MP3, WAV, FLAC, OGG.">
       <!-- Drop Zone -->
       <div class="drop-zone card reveal" id="dropZone">
         <input type="file" class="file-input" id="fileInput" accept="audio/*" aria-label="Choose an audio file">
@@ -1380,7 +1380,7 @@
     </div>
 
     <!-- YouTube URL Panel -->
-    <div id="panelYoutube" class="input-panel card card-padded" role="tabpanel" hidden>
+    <div id="panelYoutube" class="input-panel card card-padded" role="tabpanel" hidden webmcp-tool webmcp-tool-name="analyzeYoutube" webmcp-tool-description="Analyze BPM from a YouTube video URL. Paste a youtube.com or youtu.be link, fetches audio via Piped API.">
       <div class="youtube-input-row">
         <label for="youtubeUrlInput" class="sr-only">YouTube video URL</label>
         <input type="url" id="youtubeUrlInput" class="youtube-input"
@@ -1412,7 +1412,7 @@
     </div>
 
     <!-- Capture Panel -->
-    <div id="panelCapture" class="input-panel card card-padded" role="tabpanel" hidden>
+    <div id="panelCapture" class="input-panel card card-padded" role="tabpanel" hidden webmcp-tool webmcp-tool-name="captureAudio" webmcp-tool-description="Capture live audio for BPM detection. Use your microphone or record audio from another browser tab.">
       <div class="capture-ready" id="captureReady">
         <p class="capture-desc">Choose an audio source to capture:</p>
         <div class="capture-options">

@@ -1,0 +1,48 @@
+# BPMfinder — Free Online BPM Tempo Analyzer
+
+> Detect the BPM (beats per minute) of any song instantly in your browser. 100% private — all processing happens client-side via essentia.js WASM. No servers, no sign-ups, no data uploads.
+
+## Input Modes
+
+- **File Upload**: Drop or click to browse audio files (MP3, WAV, FLAC, OGG, OPUS, AAC, M4A). Max 200MB. Auto-analyzes on file select.
+- **YouTube URL**: Paste a YouTube link (youtube.com/watch?v=, youtu.be/, shorts/, embed/) to analyze audio via Piped API. Falls back to Tab Capture if Piped is unavailable.
+- **Microphone Capture**: Click "Microphone" in the Capture tab to record 10 seconds of live audio via your device mic (requires HTTPS/localhost).
+- **Tab Capture**: Click "Tab Audio" in the Capture tab to capture 10 seconds of audio from another browser tab via getDisplayMedia (requires Chrome 74+, Firefox 76+, Safari 17+).
+
+## Features
+
+- BPM display with animated counter and color-coded confidence indicator (green ≥70%, amber ≥50%, red <50%)
+- Tempo classification: Grave (1-40), Largo (41-60), Larghetto (61-66), Adagio (67-76), Andante (77-108), Moderato (109-120), Allegro (121-156), Vivace (157-176), Presto (177-200), Prestissimo (201+)
+- Tempo reference modal with descriptions for each classification
+- Dark and light theme (persisted in localStorage)
+- Drag-and-drop support for file upload
+- Fully responsive: mobile, tablet, desktop
+- Offline support for file analysis via Service Worker
+- Keyboard accessible: Tab navigation, Enter to submit
+
+## How to Use
+
+1. Choose input mode: File, YouTube, or Capture (tabs at top of page)
+2. For File: drag an audio file onto the drop zone or click to browse
+3. For YouTube: paste a YouTube URL and click Analyze
+4. For Capture: choose Microphone or Tab Audio, grant permission when prompted
+5. Wait ~1-2 seconds for analysis — BPM result appears with animation
+6. Click ⓘ next to the tempo label to see the full tempo reference table
+7. Toggle dark/light theme with the sun/moon icon in the header
+
+## Technical Details
+
+- **BPM Detection**: essentia.js WASM (RhythmExtractor2013 algorithm) from MTG/UPF
+- **YouTube Metadata**: Piped API (public instances, no API key needed)
+- **Audio Capture**: WebRTC APIs (getUserMedia for mic, getDisplayMedia for tab)
+- **Audio Codecs**: Web Audio API decodes MP3, WAV, FLAC, OGG, OPUS, AAC
+- **Offline**: Service Worker caches essentia.js WASM and static assets
+- **No Backend**: 100% static site, deployed on GitHub Pages
+
+## Links
+
+- [BPMfinder App](https://fecolinhares.github.io/BPMfinder/)
+- [Source Code (GitHub)](https://github.com/fecolinhares/BPMfinder)
+- [essentia.js](https://github.com/MTG/essentia.js)
+- [Piped API](https://github.com/TeamPiped/Piped)
+- [License: MIT](https://github.com/fecolinhares/BPMfinder/blob/master/LICENSE)
