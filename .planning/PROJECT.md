@@ -58,6 +58,28 @@ Users can discover the BPM of any song instantly, privately, and without uploadi
 - History / localStorage of past detections
 - Downloading YouTube audio (analysis only, no save-to-disk)
 
+## Requirements
+
+### Core Detection
+- **REQ-01**: BPM detection from audio files (MP3, WAV, FLAC, OGG) via essentia.js WASM
+- **REQ-02**: Confidence scoring and tempo classification (Grave → Prestissimo)
+- **REQ-03**: Auto-analyze on file select/drop — no intermediary click
+
+### Input Modes
+- **REQ-04**: YouTube URL input — Piped API with videoStreams fallback
+- **REQ-05**: Microphone capture via getUserMedia — 10s MediaRecorder pipeline
+- **REQ-06**: Tab audio capture via getDisplayMedia — 10s MediaRecorder pipeline
+
+### UX & Privacy
+- **REQ-07**: 100% client-side — no server uploads, no API keys needed
+- **REQ-08**: Dark/light theme with localStorage persistence
+- **REQ-09**: Offline support via Service Worker (file upload mode)
+- **REQ-10**: Responsive mobile layout, keyboard accessible, reduced-motion support
+
+### AI & Discoverability
+- **REQ-11**: llms.txt for AI agent discovery
+- **REQ-12**: WebMCP Declarative API annotations on input elements
+
 ## Context
 
 - Pure frontend: HTML + CSS + JavaScript (no frameworks)
