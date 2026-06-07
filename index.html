@@ -1869,11 +1869,30 @@
       if (!audioContext) audioContext = new AudioContext();
       const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
       const channelData = audioBuffer.getChannelData(0);
-      return runEssentia(channelData);
+      return runEssentia(channelData, audioBuffer.sampleRate);
     }
 
     // --- Shared essentia.js pipeline ---
-    async function runEssentia(channelData) {
+    async function resampleTo44100(channelData, inputSampleRate) {
+      if (inputSampleRate === 44100) return channelData;
+      const totalSamples = Math.ceil(channelData.length * 44100 / inputSampleRate);
+      const offlineCtx = new OfflineAudioContext(1, totalSamples, 44100);
+      const buffer = offlineCtx.createBuffer(1, channelData.length, inputSampleRate);
+      buffer.getChannelData(0).set(channelData);
+      const source = offlineCtx.createBufferSource();
+      source.buffer = buffer;
+      source.connect(offlineCtx.destination);
+      source.start();
+      const rendered = await offlineCtx.startRendering();
+      return rendered.getChannelData(0);
+    }
+
+    async function runEssentia(channelData, sampleRate) {
+      // Resample to 44100 Hz if needed — essentia.js RhythmExtractor2013
+      // internally assumes 44100 Hz and produces wrong BPM at other rates.
+      if (sampleRate && sampleRate !== 44100) {
+        channelData = await resampleTo44100(channelData, sampleRate);
+      }
       const EssentiaConstructor = globalThis.Essentia;
       const wasmFactory = globalThis.EssentiaWASM;
       if (!EssentiaConstructor || !wasmFactory) {
@@ -2128,7 +2147,7 @@
         if (!audioContext) audioContext = new AudioContext();
         const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
         const channelData = audioBuffer.getChannelData(0);
-        const bpm = await runEssentia(channelData);
+        const bpm = await runEssentia(channelData, audioBuffer.sampleRate);
         displayResult(bpm);
 
         resetYoutubeMode();
@@ -2252,7 +2271,7 @@
         ? stereoToMono(audioBuffer)
         : audioBuffer.getChannelData(0);
 
-      const bpm = await runEssentia(channelData);
+      const bpm = await runEssentia(channelData, audioBuffer.sampleRate);
       // Override source for displayResult
       const savedMode = currentMode;
       currentMode = sourceLabel;
