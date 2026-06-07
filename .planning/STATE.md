@@ -1,7 +1,7 @@
 # STATE: BPMfinder
 
 **Status:** 🟢 Phase 10 complete — YouTube Integration: Piped API Rework
-**Last updated:** 2026-06-04
+**Last updated:** 2026-06-07
 
 ## Project Reference
 
@@ -30,6 +30,7 @@ See: `.planning/PROJECT.md`
 | Task | Status | Date |
 |------|--------|------|
 | Sample Rate Resample Fix (44100 Hz) | ✅ Complete | 2026-06-07 |
+| .planning/ estrutura — mover tasks/ → Phase-N-* | ✅ Complete | 2026-06-07 |
 
 ## Features Delivered (Full)
 
