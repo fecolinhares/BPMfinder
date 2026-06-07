@@ -25,6 +25,12 @@ See: `.planning/PROJECT.md`
 | Phase 9 — AI Agent Optimization: llms.txt + WebMCP | ✅ Complete |
 | Phase 10 — YouTube Integration: Piped API Rework | ✅ Complete |
 
+## Quick Tasks
+
+| Task | Status | Date |
+|------|--------|------|
+| Sample Rate Resample Fix (44100 Hz) | ✅ Complete | 2026-06-07 |
+
 ## Features Delivered (Full)
 
 ### 📁 File Upload
